@@ -1,0 +1,65 @@
+{
+  "bills": [
+    {
+      "id": "bill_01",
+      "name": "Rent",
+      "amount": 1200.00,
+      "dueDate": 1,
+      "description": "Monthly apartment rent",
+      "category": "housing"
+    },
+    {
+      "id": "bill_02",
+      "name": "Electricity",
+      "amount": 85.50,
+      "dueDate": 15,
+      "description": "Electric utility bill",
+      "category": "utilities"
+    },
+    {
+      "id": "bill_03",
+      "name": "Internet",
+      "amount": 69.99,
+      "dueDate": 5,
+      "description": "Monthly internet service",
+      "category": "utilities"
+    },
+    {
+      "id": "bill_04",
+      "name": "Phone",
+      "amount": 45.00,
+      "dueDate": 10,
+      "category": "utilities"
+    },
+    {
+      "id": "bill_05",
+      "name": "Car Insurance",
+      "amount": 125.00,
+      "dueDate": 20,
+      "description": "Monthly car insurance premium",
+      "category": "insurance"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_01",
+      "billId": "bill_01",
+      "amount": 1200.00,
+      "paidAt": "2024-03-01T10:00:00Z",
+      "note": "March rent payment"
+    },
+    {
+      "id": "pay_02",
+      "billId": "bill_02",
+      "amount": 85.50,
+      "paidAt": "2024-03-15T14:30:00Z",
+      "note": "March electricity"
+    },
+    {
+      "id": "pay_03",
+      "billId": "bill_03",
+      "amount": 69.99,
+      "paidAt": "2024-03-05T09:15:00Z"
+    }
+  ]
+}
