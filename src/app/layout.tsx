@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "💸 Pay The Bills - Track your bills and payments",
-  description: "Pay The Bills is a simple bill tracker that helps you manage your bills and payments.",
+  title: "💸 Money Flow",
+  description: "Money Flow is a simple bill tracker that helps you manage your bills and payments.",
 };
 
 export default function RootLayout({
