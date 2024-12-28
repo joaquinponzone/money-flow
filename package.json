@@ -35,7 +35,8 @@
     "react-dom": "^19.0.0",
     "recharts": "^2.15.0",
     "tailwind-merge": "^2.5.5",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "dotenv": "^16.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
