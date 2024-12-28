@@ -1,20 +1,36 @@
-"use client"
+'use client'
 
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-
-const data = [
-  { name: 'Housing', value: 1200 },
-  { name: 'Utilities', value: 240 },
-  { name: 'Transportation', value: 350 },
-  { name: 'Insurance', value: 180 },
-  { name: 'Other', value: 270 },
-]
+import { useEffect, useState } from "react"
+import { getExpensesByCategory } from "@/app/actions"
 
 const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))']
 
 export default function ExpensesByCategory() {
+  const [data, setData] = useState<Array<{ name: string; value: number }>>([])
+  const [config, setConfig] = useState<Record<string, { label: string; color: string }>>({})
+
+  useEffect(() => {
+    async function fetchData() {
+      const expenseData = await getExpensesByCategory()
+      setData(expenseData)
+
+      const newConfig = expenseData.reduce((acc, { name }, index) => {
+        acc[name.toLowerCase()] = {
+          label: name,
+          color: `hsl(var(--chart-${(index % 5) + 1}))`,
+        }
+        return acc
+      }, {} as Record<string, { label: string; color: string }>)
+
+      setConfig(newConfig)
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <Card>
       <CardHeader>
@@ -22,30 +38,7 @@ export default function ExpensesByCategory() {
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
-          <ChartContainer
-            config={{
-              housing: {
-                label: "Housing",
-                color: "hsl(var(--chart-1))",
-              },
-              utilities: {
-                label: "Utilities",
-                color: "hsl(var(--chart-2))",
-              },
-              transportation: {
-                label: "Transportation",
-                color: "hsl(var(--chart-3))",
-              },
-              insurance: {
-                label: "Insurance",
-                color: "hsl(var(--chart-4))",
-              },
-              other: {
-                label: "Other",
-                color: "hsl(var(--chart-5))",
-              },
-            }}
-          >
+          <ChartContainer config={config}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -71,4 +64,3 @@ export default function ExpensesByCategory() {
     </Card>
   )
 }
-

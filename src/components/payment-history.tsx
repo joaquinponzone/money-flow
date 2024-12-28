@@ -1,5 +1,3 @@
-"use client"
-
 import {
   Table,
   TableBody,
@@ -8,43 +6,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getPayments } from '@/app/actions'
 
-const payments = [
-  {
-    id: 1,
-    billName: "Electricity",
-    amount: 150.00,
-    date: "Mar 15, 2024",
-    note: "March payment"
-  },
-  {
-    id: 2,
-    billName: "Internet",
-    amount: 89.99,
-    date: "Mar 05, 2024",
-    note: "-"
-  }
-]
+export default async function PaymentHistory() {
+  const payments = await getPayments()
 
-export default function PaymentHistory() {
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Bill Name</TableHead>
-            <TableHead>Amount</TableHead>
+            {/* <TableHead>Expense Name</TableHead> */}
             <TableHead>Date</TableHead>
             <TableHead>Note</TableHead>
+            <TableHead>Amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {payments.map((payment) => (
             <TableRow key={payment.id}>
-              <TableCell>{payment.billName}</TableCell>
-              <TableCell>${payment.amount.toFixed(2)}</TableCell>
-              <TableCell>{payment.date}</TableCell>
+              {/* <TableCell>{payment.expenseId}</TableCell> */}
+              <TableCell>{payment.paidAt.toLocaleDateString()}</TableCell>
               <TableCell>{payment.note}</TableCell>
+              <TableCell>${Number(payment.amount).toFixed(2)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -52,4 +36,3 @@ export default function PaymentHistory() {
     </div>
   )
 }
-

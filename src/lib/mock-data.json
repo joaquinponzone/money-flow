@@ -1,65 +1,85 @@
 {
-  "bills": [
+  "expenses": [
     {
-      "id": "bill_01",
       "name": "Rent",
-      "amount": 1200.00,
-      "dueDate": 1,
+      "amount": "1200.00",
+      "dueDate": "2025-01-01",
       "description": "Monthly apartment rent",
-      "category": "housing"
+      "category": "housing",
+      "createdAt": "2025-01-01T00:00:00Z"
     },
     {
-      "id": "bill_02",
-      "name": "Electricity",
-      "amount": 85.50,
-      "dueDate": 15,
+      "name": "Electricity", 
+      "amount": "85.50",
+      "dueDate": "2025-01-15",
       "description": "Electric utility bill",
-      "category": "utilities"
+      "category": "utilities",
+      "createdAt": "2025-01-02T00:00:00Z"
     },
     {
-      "id": "bill_03",
       "name": "Internet",
-      "amount": 69.99,
-      "dueDate": 5,
+      "amount": "69.99", 
+      "dueDate": "2025-01-05",
       "description": "Monthly internet service",
-      "category": "utilities"
+      "category": "utilities",
+      "createdAt": "2025-01-03T00:00:00Z"
     },
     {
-      "id": "bill_04",
       "name": "Phone",
-      "amount": 45.00,
-      "dueDate": 10,
-      "category": "utilities"
+      "amount": "45.00",
+      "dueDate": "2025-01-10",
+      "description": "Monthly phone bill",
+      "category": "utilities",
+      "createdAt": "2025-01-04T00:00:00Z"
     },
     {
-      "id": "bill_05",
       "name": "Car Insurance",
-      "amount": 125.00,
-      "dueDate": 20,
+      "amount": "125.00",
+      "dueDate": "2025-01-20",
       "description": "Monthly car insurance premium",
-      "category": "insurance"
+      "category": "insurance",
+      "createdAt": "2025-01-05T00:00:00Z"
     }
   ],
   "payments": [
     {
-      "id": "pay_01",
       "billId": "bill_01",
-      "amount": 1200.00,
+      "amount": "1200.00",
       "paidAt": "2024-03-01T10:00:00Z",
-      "note": "March rent payment"
+      "note": "March rent payment",
+      "createdAt": "2024-03-01T10:00:00Z"
     },
     {
-      "id": "pay_02",
       "billId": "bill_02",
-      "amount": 85.50,
+      "amount": "85.50",
       "paidAt": "2024-03-15T14:30:00Z",
-      "note": "March electricity"
+      "note": "March electricity",
+      "createdAt": "2024-03-15T14:30:00Z"
     },
     {
-      "id": "pay_03",
       "billId": "bill_03",
-      "amount": 69.99,
-      "paidAt": "2024-03-05T09:15:00Z"
+      "amount": "69.99",
+      "paidAt": "2024-03-05T09:15:00Z",
+      "note": null,
+      "createdAt": "2024-03-05T09:15:00Z"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Housing",
+      "description": "Monthly rental payments"
+    },
+    {
+      "name": "Utilities",
+      "description": "Regular household utilities"
+    },
+    {
+      "name": "Internet",
+      "description": "Internet service provider bills"
+    },
+    {
+      "name": "Insurance",
+      "description": "Various insurance payments"
     }
   ]
 }

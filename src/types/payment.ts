@@ -1,7 +1,8 @@
 export interface Payment {
     id: string;
     billId: string;
-    amount: number;
-    paidAt: string;
-    note?: string;
+    amount: string;
+    paidAt: Date;
+    note?: string | null;
+    createdAt?: Date | null;
   } 

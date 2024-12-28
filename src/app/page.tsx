@@ -4,30 +4,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import PaymentHistory from "@/components/payment-history"
-import AddBillDialog from "@/components/add-bill-dialog"
-import UpcomingBills from "@/components/upcoming-bills"
+import AddExpenseDialog from "@/components/add-expense-dialog"
+import UpcomingExpenses from "@/components/upcoming-expenses"
 import BudgetOverview from "@/components/budget-overview"
 import ExpensesByCategory from "@/components/expenses-by-category"
 import SavingsGoals from "@/components/savings-goals"
-import BillsTable from "@/components/bills-table"
+import ExpensesTable from "@/components/expenses-table"
+import { getCategories } from "@/app/actions"
 
-
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const categories = await getCategories()
+  
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Monthly Bills Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Monthly Expenses Dashboard</h1>
           <p className="text-muted-foreground">
-            Manage your monthly bills and view payment history
+            Manage your monthly expenses and view payment history
           </p>
         </div>
-        <AddBillDialog>
+        <AddExpenseDialog categories={categories}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Add Bill
+            Add Expense
           </Button>
-        </AddBillDialog>
+        </AddExpenseDialog>
       </div>
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-4 mb-6">
@@ -83,11 +85,11 @@ export default function DashboardPage() {
           <CardContent>
             <Tabs defaultValue="monthly" className="space-y-4">
               <TabsList>
-                <TabsTrigger value="monthly">Monthly Bills</TabsTrigger>
+                <TabsTrigger value="monthly">Monthly Expenses</TabsTrigger>
                 <TabsTrigger value="history">Payment History</TabsTrigger>
               </TabsList>
               <TabsContent value="monthly" className="space-y-4">
-                <BillsTable />
+                <ExpensesTable />
               </TabsContent>
               <TabsContent value="history" className="space-y-4">
                 <PaymentHistory />
@@ -95,9 +97,8 @@ export default function DashboardPage() {
             </Tabs>
           </CardContent>
         </Card>
-        <UpcomingBills />
+        <UpcomingExpenses />
       </div>
     </div>
   )
 }
-
