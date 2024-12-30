@@ -36,7 +36,6 @@ export default function AddExpenseDialog({ categories, children }: AddExpenseDia
     amount: '',
     dueDate: new Date(),
     categoryId: '',
-    isActive: true,
     createdAt: new Date()
   })
 
@@ -44,7 +43,11 @@ export default function AddExpenseDialog({ categories, children }: AddExpenseDia
 
   const handleAddExpense = async (expense: NewExpense) => {
     startTransition(async () => {
-      await createExpense(expense)
+      await createExpense({
+        ...expense,
+        note: expense.note || null,
+        paidAt: expense.paidAt || null
+      })
       setOpen(false)
     })
   }

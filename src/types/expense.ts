@@ -5,7 +5,8 @@ export interface Expense {
   dueDate: Date;
   description: string | null;
   categoryId: string;
-  isActive: boolean;
+  paidAt?: Date | null;
+  note?: string | null;
   createdAt: Date | null;
 }
 
@@ -15,6 +16,7 @@ export interface NewExpense {
   amount: string;
   dueDate: Date;
   categoryId: string;
-  isActive: boolean;
+  paidAt?: Date | null;
+  note?: string | null;
   createdAt: Date;
 }

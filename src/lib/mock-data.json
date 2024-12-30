@@ -2,26 +2,32 @@
   "expenses": [
     {
       "name": "Rent",
-      "amount": "1200.00",
+      "amount": "1200.00", 
       "dueDate": "2025-01-01",
       "description": "Monthly apartment rent",
       "category": "housing",
+      "paidAt": null,
+      "note": null,
       "createdAt": "2025-01-01T00:00:00Z"
     },
     {
-      "name": "Electricity", 
+      "name": "Electricity",
       "amount": "85.50",
-      "dueDate": "2025-01-15",
+      "dueDate": "2025-01-15", 
       "description": "Electric utility bill",
       "category": "utilities",
+      "paidAt": null,
+      "note": null,
       "createdAt": "2025-01-02T00:00:00Z"
     },
     {
       "name": "Internet",
-      "amount": "69.99", 
+      "amount": "69.99",
       "dueDate": "2025-01-05",
-      "description": "Monthly internet service",
-      "category": "utilities",
+      "description": "Monthly internet service", 
+      "category": "internet",
+      "paidAt": null,
+      "note": null,
       "createdAt": "2025-01-03T00:00:00Z"
     },
     {
@@ -30,6 +36,8 @@
       "dueDate": "2025-01-10",
       "description": "Monthly phone bill",
       "category": "utilities",
+      "paidAt": null,
+      "note": null,
       "createdAt": "2025-01-04T00:00:00Z"
     },
     {
@@ -38,48 +46,35 @@
       "dueDate": "2025-01-20",
       "description": "Monthly car insurance premium",
       "category": "insurance",
-      "createdAt": "2025-01-05T00:00:00Z"
-    }
-  ],
-  "payments": [
-    {
-      "billId": "bill_01",
-      "amount": "1200.00",
-      "paidAt": "2024-03-01T10:00:00Z",
-      "note": "March rent payment",
-      "createdAt": "2024-03-01T10:00:00Z"
-    },
-    {
-      "billId": "bill_02",
-      "amount": "85.50",
-      "paidAt": "2024-03-15T14:30:00Z",
-      "note": "March electricity",
-      "createdAt": "2024-03-15T14:30:00Z"
-    },
-    {
-      "billId": "bill_03",
-      "amount": "69.99",
-      "paidAt": "2024-03-05T09:15:00Z",
+      "paidAt": null,
       "note": null,
-      "createdAt": "2024-03-05T09:15:00Z"
+      "createdAt": "2025-01-05T00:00:00Z"
     }
   ],
   "categories": [
     {
       "name": "Housing",
-      "description": "Monthly rental payments"
+      "description": "Monthly rental payments",
+      "color": "#FF4444",
+      "createdAt": "2025-01-01T00:00:00Z"
     },
     {
-      "name": "Utilities",
-      "description": "Regular household utilities"
+      "name": "Utilities", 
+      "description": "Regular household utilities",
+      "color": "#44FF44",
+      "createdAt": "2025-01-01T00:00:00Z"
     },
     {
       "name": "Internet",
-      "description": "Internet service provider bills"
+      "description": "Internet service provider bills",
+      "color": "#4444FF",
+      "createdAt": "2025-01-01T00:00:00Z"
     },
     {
       "name": "Insurance",
-      "description": "Various insurance payments"
+      "description": "Various insurance payments",
+      "color": "#FF44FF",
+      "createdAt": "2025-01-01T00:00:00Z"
     }
   ]
 }

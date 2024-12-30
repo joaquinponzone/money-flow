@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, CheckCircle2, XCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -13,6 +13,7 @@ import { format } from 'date-fns'
 import { Expense } from '@/types/expense'
 import EditExpenseDialog from './edit-expense-dialog'
 import DeleteExpenseDialog from './delete-expense-dialog'
+import { Badge } from "@/components/ui/badge"
 
 export default async function ExpensesTable() {
   const [expenses, categories] = await Promise.all([
@@ -20,7 +21,6 @@ export default async function ExpensesTable() {
     getCategories()
   ])
 
-  // Create a map of category IDs to names for efficient lookup
   const categoryMap = new Map(
     categories.map(category => [category.id, category.name])
   )
@@ -34,6 +34,7 @@ export default async function ExpensesTable() {
             <TableHead>Amount</TableHead>
             <TableHead>Due Date</TableHead>
             <TableHead>Category</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -44,6 +45,19 @@ export default async function ExpensesTable() {
               <TableCell>${Number(expense.amount).toFixed(2)}</TableCell>
               <TableCell>{format(new Date(expense.dueDate), 'dd/MM/yyyy')}</TableCell>
               <TableCell>{categoryMap.get(expense.categoryId) ?? 'Unknown'}</TableCell>
+              <TableCell>
+                {expense.paidAt ? (
+                  <Badge variant="default" className="flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Paid {format(new Date(expense.paidAt), 'dd/MM/yyyy')}
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive" className="flex items-center gap-1">
+                    <XCircle className="h-3 w-3" />
+                    Unpaid
+                  </Badge>
+                )}
+              </TableCell>
               <TableCell className="text-right space-x-2">
                 <EditExpenseDialog expense={expense} categories={categories}>
                   <Button variant="ghost" size="icon">

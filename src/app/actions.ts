@@ -2,10 +2,11 @@
 
 import { cache } from 'react'
 import { db } from '@/db'
-import { expenses, payments, expensePayments, categories } from '@/db/schema'
+import { expenses, categories } from '@/db/schema'
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { format } from 'date-fns'
 import { revalidatePath } from 'next/cache'
+
 
 interface Expense {
   id: string;
@@ -14,7 +15,8 @@ interface Expense {
   dueDate: Date;
   description: string | null;
   categoryId: string;
-  isActive: boolean;
+  paidAt: Date | null;
+  note: string | null;
   createdAt: Date | null;
 }
 
@@ -30,14 +32,6 @@ export interface UpcomingExpense {
   dueDate: string;
   categoryId: string;
   daysUntilDue: number;
-}
-
-export interface Payment {
-  id: string;
-  amount: string;
-  paidAt: Date;
-  note: string | null;
-  createdAt: Date | null;
 }
 
 export const getExpenses = cache(async (): Promise<Expense[]> => {
@@ -131,30 +125,6 @@ export const getExpenseById = cache(async (id: string): Promise<Expense | null> 
   };
 });
 
-export const getPayments = cache(async (): Promise<Payment[]> => {
-  const data = await db.select().from(payments);
-  return data.map(payment => ({
-    ...payment,
-    amount: payment.amount.toString()
-  }));
-});
-
-export const getPaymentsByExpenseId = cache(async (expenseId: string): Promise<Payment[]> => {
-  const data = await db
-    .select({
-      payment: payments,
-      expensePayment: expensePayments
-    })
-    .from(payments)
-    .innerJoin(expensePayments, eq(payments.id, expensePayments.paymentId))
-    .where(eq(expensePayments.expenseId, expenseId));
-
-  return data.map(({ payment }) => ({
-    ...payment,
-    amount: payment.amount.toString()
-  }));
-});
-
 export async function createExpense(expense: Omit<Expense, 'id'>): Promise<Expense> {
   const dueDate = toUTCMidnight(new Date(expense.dueDate));
   
@@ -164,7 +134,8 @@ export async function createExpense(expense: Omit<Expense, 'id'>): Promise<Expen
     dueDate,
     description: expense.description,
     categoryId: expense.categoryId,
-    isActive: expense.isActive
+    paidAt: expense.paidAt,
+    note: expense.note
   }).returning();
 
   revalidatePath('/')
@@ -197,11 +168,6 @@ export async function updateExpense(expense: Expense): Promise<Expense> {
 
 export async function deleteExpense(id: string): Promise<void> {
   try {
-    // First delete any related expense payments
-    await db.delete(expensePayments)
-      .where(eq(expensePayments.expenseId, id))
-
-    // Then delete the expense
     await db.delete(expenses)
       .where(eq(expenses.id, id))
 
@@ -212,33 +178,13 @@ export async function deleteExpense(id: string): Promise<void> {
   }
 }
 
-export async function createPayment(payment: Omit<Payment, 'id'>, expenseId: string): Promise<Payment> {
-  const paidAt = toUTCMidnight(new Date(payment.paidAt));
-
-  const [insertedPayment] = await db.insert(payments).values({
-    amount: payment.amount,
-    paidAt,
-    note: payment.note
-  }).returning();
-
-  await db.insert(expensePayments).values({
-    expenseId,
-    paymentId: insertedPayment.id,
-    amount: payment.amount,
-    dueDate: paidAt,
-    isPaid: true
-  });
-
-  return {
-    ...insertedPayment,
-    amount: insertedPayment.amount.toString()
-  };
-}
-
-export async function deletePayment(id: string): Promise<string> {
-  await db.delete(expensePayments).where(eq(expensePayments.paymentId, id));
-  await db.delete(payments).where(eq(payments.id, id));
-  return id;
+export async function getPayments() {
+  try {
+    return db.select().from(expenses);
+  } catch (error) {
+    console.error('Error getting payments:', error)
+    throw new Error('Failed to get payments')
+  }
 }
 
 function toUTCMidnight(date: Date): Date {

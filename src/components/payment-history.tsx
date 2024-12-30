@@ -26,7 +26,7 @@ export default async function PaymentHistory() {
           {payments.map((payment) => (
             <TableRow key={payment.id}>
               {/* <TableCell>{payment.expenseId}</TableCell> */}
-              <TableCell>{payment.paidAt.toLocaleDateString()}</TableCell>
+              <TableCell>{payment.paidAt ? payment.paidAt.toLocaleDateString() : ''}</TableCell>
               <TableCell>{payment.note}</TableCell>
               <TableCell>${Number(payment.amount).toFixed(2)}</TableCell>
             </TableRow>
