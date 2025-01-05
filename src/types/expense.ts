@@ -1,22 +1,24 @@
 export interface Expense {
-  id: string;
-  name: string;
+  id: number;
+  userId: string;
+  title: string;
   amount: string;
-  dueDate: Date;
   description: string | null;
-  categoryId: string;
-  paidAt?: Date | null;
-  note?: string | null;
-  createdAt: Date | null;
+  category: string | null;
+  date: Date | string | null;
+  isRecurring: boolean | null;
+  paidAt: Date | string | null;
+  dueDate: Date | string | null;
 }
 
 export interface NewExpense {
-  name: string;
-  description: string | null;
+  userId: string;
+  title: string;
   amount: string;
-  dueDate: Date;
-  categoryId: string;
-  paidAt?: Date | null;
-  note?: string | null;
-  createdAt: Date;
+  description: string | null;
+  category: string | null;
+  date: Date | string | null;
+  isRecurring: boolean | null;
+  paidAt: Date | string | null;
+  dueDate: Date | string | null;
 }

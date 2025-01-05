@@ -2,70 +2,36 @@
 
 import { cache } from 'react'
 import { db } from '@/db'
-import { expenses, categories } from '@/db/schema'
-import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { format } from 'date-fns'
+import { expenses, incomes } from '@/db/schema'
+import { desc, eq, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
-
-
-interface Expense {
-  id: string;
-  name: string;
-  amount: string;
-  dueDate: Date;
-  description: string | null;
-  categoryId: string;
-  paidAt: Date | null;
-  note: string | null;
-  createdAt: Date | null;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-}
-
-export interface UpcomingExpense {
-  id: string;
-  name: string;
-  amount: string;
-  dueDate: string;
-  categoryId: string;
-  daysUntilDue: number;
-}
+import { Expense, NewExpense } from '@/types/expense'
+import { Income, NewIncome } from '@/types/income'
 
 export const getExpenses = cache(async (): Promise<Expense[]> => {
-  const data = await db.select().from(expenses).orderBy(desc(expenses.amount));
-  return data.map(expense => ({
-    ...expense,
-    amount: expense.amount.toString()
-  }));
-});
-
-export const getCategories = cache(async (): Promise<Category[]> => {
-  const data = await db.select().from(categories);
-  return data.map(category => ({
-    id: category.id,
-    name: category.name
-  }));
+  const expensesResponse = await db
+    .select()
+    .from(expenses)
+    .orderBy(desc(expenses.dueDate));
+  
+  return expensesResponse;
 });
 
 export const getExpensesByCategory = cache(async () => {
   const data = await db
     .select({
-      name: categories.name,
+      name: expenses.category,
       value: sql<number>`sum(${expenses.amount})`,
       expenses: sql`json_agg(json_build_object(
         'id', ${expenses.id},
-        'name', ${expenses.name}, 
+        'name', ${expenses.description}, 
         'amount', ${expenses.amount},
         'dueDate', ${expenses.dueDate},
         'description', ${expenses.description}
       ))`
     })
     .from(expenses)
-    .innerJoin(categories, eq(expenses.categoryId, categories.id))
-    .groupBy(categories.name);
+    .groupBy(expenses.category);
 
   return data.map(category => ({
     name: category.name,
@@ -80,41 +46,11 @@ export const getExpensesByCategory = cache(async () => {
   }));
 });
 
-export const getUpcomingExpenses = cache(async (): Promise<UpcomingExpense[]> => {
-  const today = toUTCMidnight(new Date());
-  const tenDaysFromNow = new Date(today);
-  tenDaysFromNow.setDate(today.getDate() + 10);
-
-  const data = await db
-    .select()
-    .from(expenses)
-    .where(
-      and(
-        gte(expenses.dueDate, today),
-        lte(expenses.dueDate, tenDaysFromNow)
-      )
-    )
-    .orderBy(asc(expenses.dueDate));
-
-  return data.map(expense => {
-    const daysUntilDue = Math.ceil((expense.dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-    return {
-      id: expense.id,
-      name: expense.name,
-      amount: expense.amount.toString(),
-      dueDate: format(expense.dueDate, 'dd/MM/yyyy'),
-      categoryId: expense.categoryId,
-      daysUntilDue
-    };
-  });
-});
-
 export const getExpenseById = cache(async (id: string): Promise<Expense | null> => {
   const results = await db
     .select()
     .from(expenses)
-    .where(eq(expenses.id, id))
+    .where(eq(expenses.id, Number(id)))
     .limit(1);
   
   if (!results[0]) return null;
@@ -125,51 +61,45 @@ export const getExpenseById = cache(async (id: string): Promise<Expense | null> 
   };
 });
 
-export async function createExpense(expense: Omit<Expense, 'id'>): Promise<Expense> {
-  const dueDate = toUTCMidnight(new Date(expense.dueDate));
-  
+export async function createExpense(expense: Omit<NewExpense, 'id'>): Promise<Expense> {
   const [insertedExpense] = await db.insert(expenses).values({
-    name: expense.name,
+    userId: expense.userId,
+    title: expense.title,
     amount: expense.amount,
-    dueDate,
+    dueDate: expense.dueDate ? new Date(expense.dueDate) : null,
+    date: expense.date ? new Date(expense.date) : null,
     description: expense.description,
-    categoryId: expense.categoryId,
-    paidAt: expense.paidAt,
-    note: expense.note
+    category: expense.category,
+    paidAt: expense.paidAt ? new Date(expense.paidAt) : null,
+    isRecurring: expense.isRecurring
   }).returning();
 
   revalidatePath('/')
 
-  return {
-    ...insertedExpense,
-    amount: insertedExpense.amount.toString()
-  };
+  return insertedExpense;
 }
 
 export async function updateExpense(expense: Expense): Promise<Expense> {
   const { id, ...updateData } = expense;
-  const dueDate = toUTCMidnight(new Date(updateData.dueDate));
-
   const [updatedExpense] = await db.update(expenses)
     .set({
       ...updateData,
-      dueDate
+      dueDate: updateData.dueDate ? new Date(updateData.dueDate) : null,
+      date: updateData.date ? new Date(updateData.date) : null,
+      paidAt: updateData.paidAt ? new Date(updateData.paidAt) : null
     })
     .where(eq(expenses.id, id))
     .returning();
 
   revalidatePath('/')
 
-  return {
-    ...updatedExpense,
-    amount: updatedExpense.amount.toString()
-  };
+  return updatedExpense;
 }
 
 export async function deleteExpense(id: string): Promise<void> {
   try {
     await db.delete(expenses)
-      .where(eq(expenses.id, id))
+      .where(eq(expenses.id, Number(id)))
 
     revalidatePath('/')
   } catch (error) {
@@ -178,17 +108,58 @@ export async function deleteExpense(id: string): Promise<void> {
   }
 }
 
-export async function getPayments() {
-  try {
-    return db.select().from(expenses);
-  } catch (error) {
-    console.error('Error getting payments:', error)
-    throw new Error('Failed to get payments')
-  }
+export const getIncomes = cache(async (): Promise<Income[]> => {
+  const incomesResponse = await db
+    .select()
+    .from(incomes)
+    .orderBy(desc(incomes.date));
+  
+  return incomesResponse.map(income => ({
+    ...income,
+    amount: income.amount.toString()
+  }));
+});
+
+export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<Income> {
+  const [insertedIncome] = await db.insert(incomes).values({
+    userId: income.userId,
+    source: income.source,
+    amount: income.amount,
+    date: income.date ? new Date(income.date) : null,
+  }).returning();
+
+  revalidatePath('/')
+  return {
+    ...insertedIncome,
+    amount: insertedIncome.amount.toString()
+  };
 }
 
-function toUTCMidnight(date: Date): Date {
-  const utcDate = new Date(date.toUTCString());
-  utcDate.setUTCHours(0, 0, 0, 0);
-  return utcDate;
+export async function updateIncome(income: Income): Promise<Income> {
+  const { id, ...updateData } = income;
+  const [updatedIncome] = await db.update(incomes)
+    .set({
+      ...updateData,
+      date: updateData.date ? new Date(updateData.date) : null
+    })
+    .where(eq(incomes.id, id))
+    .returning();
+
+  revalidatePath('/')
+  return {
+    ...updatedIncome,
+    amount: updatedIncome.amount.toString()
+  };
+}
+
+export async function deleteIncome(id: string): Promise<void> {
+  try {
+    await db.delete(incomes)
+      .where(eq(incomes.id, Number(id)))
+
+    revalidatePath('/')
+  } catch (error) {
+    console.error('Error deleting income:', error)
+    throw new Error('Failed to delete income')
+  }
 }

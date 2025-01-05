@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import { categories, expenses } from '@/db/schema'
+import { expenses, incomes } from '@/db/schema'
 import mockData from '@/lib/mock-data.json'
 
 async function seed() {
@@ -8,47 +8,35 @@ async function seed() {
 
     // Clear existing data
     await db.delete(expenses)
-    await db.delete(categories)
+    await db.delete(incomes)
     console.log('Cleared existing data')
 
-    // Insert categories first
-    const insertedCategories = await db.insert(categories).values(
-      mockData.categories.map(category => ({
-        name: category.name,
-        description: category.description || null,
-        color: category.color || null,
+    // Insert expenses
+    const insertedExpenses = await db.insert(expenses).values(
+      mockData.expenses.map(expense => ({
+        userId: expense.userId,
+        title: expense.title,
+        amount: expense.amount,
+        description: expense.description,
+        category: expense.category,
+        date: expense.date ? new Date(expense.date) : null,
+        isRecurring: expense.isRecurring,
+        paidAt: expense.paidAt ? new Date(expense.paidAt) : null,
+        dueDate: expense.dueDate ? new Date(expense.dueDate) : null
       }))
     ).returning()
-    console.log(`Inserted ${insertedCategories.length} categories`)
-
-    // Create a map of category names to IDs
-    const categoryMap = new Map(
-      insertedCategories.map(category => [category.name.toLowerCase(), category.id])
-    )
-
-    // Debug: Print category mapping
-    console.log('Category Map:', Object.fromEntries(categoryMap))
-
-    // Insert expenses with category IDs
-    const expensesWithCategories = mockData.expenses.map(expense => {
-      const categoryId = categoryMap.get(expense.category.toLowerCase())
-      console.log(`Mapping category '${expense.category}' to ID:`, categoryId)
-      
-      return {
-        name: expense.name,
-        amount: expense.amount,
-        dueDate: new Date(expense.dueDate),
-        description: expense.description || null,
-        categoryId: categoryId!,
-        paidAt: expense.paidAt ? new Date(expense.paidAt) : null,
-        note: expense.note || null,
-      }
-    })
-
-    const insertedExpenses = await db.insert(expenses)
-      .values(expensesWithCategories)
-      .returning()
     console.log(`Inserted ${insertedExpenses.length} expenses`)
+
+    // Insert incomes
+    const insertedIncomes = await db.insert(incomes).values(
+      mockData.incomes.map(income => ({
+        userId: income.userId,
+        amount: income.amount,
+        source: income.source,
+        date: new Date(income.date)
+      }))
+    ).returning()
+    console.log(`Inserted ${insertedIncomes.length} incomes`)
 
     console.log('✅ Seeding completed successfully')
   } catch (error) {

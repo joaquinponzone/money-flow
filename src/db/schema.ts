@@ -1,22 +1,33 @@
-import { sql } from 'drizzle-orm';
-import { pgTable, text, timestamp, decimal } from 'drizzle-orm/pg-core';
-
-export const categories = pgTable('categories', {
-  id: text('id').primaryKey().default(sql`gen_random_uuid()`),
-  name: text('name').notNull(),
-  description: text('description'),
-  color: text('color'),
-  createdAt: timestamp('created_at').defaultNow()
-});
+import { 
+  pgTable, 
+  bigserial,
+  numeric, 
+  text, 
+  timestamp, 
+  boolean,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 export const expenses = pgTable('expenses', {
-  id: text('id').primaryKey().default(sql`gen_random_uuid()`),
-  name: text('name').notNull(),
-  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
-  dueDate: timestamp('due_date').notNull(),
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  userId: uuid('user_id').notNull(),
+  title: text('title').notNull(),
+  amount: numeric('amount').notNull(),
   description: text('description'),
-  categoryId: text('category_id').references(() => categories.id).notNull(),
+  category: text('category'),
+  date: timestamp('date', { withTimezone: true }).defaultNow(),
+  isRecurring: boolean('is_recurring').default(false),
   paidAt: timestamp('paid_at'),
-  note: text('note'),
-  createdAt: timestamp('created_at').defaultNow()
+  dueDate: timestamp('due_date', { withTimezone: true })
 });
+
+export const incomes = pgTable('incomes', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  userId: uuid('user_id').notNull(),
+  source: text('source').notNull(),
+  amount: numeric('amount').notNull(),
+  date: timestamp('date', { withTimezone: true }).defaultNow(),
+});
+
+export type Income = typeof incomes.$inferSelect;
+export type NewIncome = typeof incomes.$inferInsert;
