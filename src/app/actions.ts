@@ -17,7 +17,6 @@ export const getExpenses = cache(async (): Promise<Expense[]> => {
   return expensesResponse;
 });
 
-
 export const getExpensesByCategory = cache(async () => {
   const data = await db
     .select({
