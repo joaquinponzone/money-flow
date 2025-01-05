@@ -33,6 +33,11 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --chart-background: 0 0% 100%;
+    --chart-foreground: 0 0% 3.9%;
+    --chart-grid: 0 0% 90%;
+    --chart-success: 142 76% 36%;
+    --chart-destructive: 0 84% 60%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -59,6 +64,11 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --chart-background: 0 0% 3.9%;
+    --chart-foreground: 0 0% 98%;
+    --chart-grid: 0 0% 20%;
+    --chart-success: 142 76% 45%;
+    --chart-destructive: 0 62.8% 50.6%;
   }
 }
 

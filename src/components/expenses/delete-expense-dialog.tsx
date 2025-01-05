@@ -12,7 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { Loader2, Trash } from "lucide-react"
+import { Loader2, Trash2 } from "lucide-react"
 import { deleteExpense } from "@/app/actions"
 import { useState } from "react"
 
@@ -39,7 +39,7 @@ export function DeleteExpenseDialog({ expenseId, expenseTitle }: DeleteExpenseDi
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon">
-          <Trash className="h-4 w-4 text-destructive" />
+          <Trash2 className="h-4 w-4 text-destructive dark:text-red-300" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>  
