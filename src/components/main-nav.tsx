@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SignOutButton } from "./sign-out";
 
 
 const navItems = [
@@ -28,6 +29,7 @@ export function MainNav() {
           {item.label}
         </Link>
       ))}
+      <SignOutButton />
     </nav>
   );
-} 
+}

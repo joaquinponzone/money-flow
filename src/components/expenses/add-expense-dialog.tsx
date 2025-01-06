@@ -30,11 +30,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Checkbox } from "../ui/checkbox"
 import { createExpense } from "@/app/actions"
 import { NewExpense } from "@/types/expense"
 import { Loader2 } from "lucide-react"
+import { createBrowserClient } from "@supabase/ssr"
 
 const formSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
@@ -62,21 +63,44 @@ const categories = [
 export function AddExpenseDialog() {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function getUserId() {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+      
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserId(user.id)
+      }
+    }
+    
+    getUserId()
+  }, [])
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userId: "550e8400-e29b-41d4-a716-446655440000",
-      title: "",
-      description: "",
-      amount: "",
-      category: "",
+      userId: '',
+      title: '',
+      description: '',
+      amount: '',
+      category: '',
       date: null,
       dueDate: null,
       isRecurring: false,
       isPaid: false,
     },
   })
+
+  useEffect(() => {
+    if (userId) {
+      form.setValue('userId', userId)
+    }
+  }, [userId, form])
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
