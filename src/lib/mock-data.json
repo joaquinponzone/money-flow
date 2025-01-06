@@ -1,7 +1,7 @@
 {
   "expenses": [
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Klein 96",
       "amount": "100.00",
       "description": "Monthly house bills",
@@ -12,7 +12,7 @@
       "dueDate": "2024-11-01T00:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Klein 96",
       "amount": "100.00",
       "description": "Monthly house bills",
@@ -23,7 +23,7 @@
       "dueDate": "2024-12-01T00:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Klein 96",
       "amount": "100.00",
       "description": "Monthly house bills",
@@ -34,7 +34,7 @@
       "dueDate": "2025-01-01T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Eden",
       "amount": "15.50",
       "description": "Electric utility bill for San Lorenzo 136",
@@ -45,7 +45,7 @@
       "dueDate": "2024-11-15T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Eden",
       "amount": "13.50",
       "description": "Electric utility bill for San Lorenzo 136",
@@ -56,7 +56,7 @@
       "dueDate": "2024-12-15T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Car",
       "amount": "38.88",
       "description": "Insurance",
@@ -67,7 +67,7 @@
       "dueDate": "2024-11-05T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Car",
       "amount": "38.88",
       "description": "insurance",
@@ -78,7 +78,7 @@
       "dueDate": "2024-12-05T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Klein 96",
       "amount": "200.00",
       "description": "Monthly house cost",
@@ -89,7 +89,7 @@
       "dueDate": "2025-01-10T00:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "OSDE",
       "amount": "209.00",
       "description": "Health Insurance",
@@ -100,7 +100,7 @@
       "dueDate": "2024-12-15T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "SoundCloud",
       "amount": "7.72",
       "description": "SoundCloud Pro subscription",
@@ -111,7 +111,7 @@
       "dueDate": "2024-12-12T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Tuenti",
       "amount": "8.25",
       "description": "Monthly cell phone refill",
@@ -122,7 +122,7 @@
       "dueDate": "2024-12-13T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "LinkedIn",
       "amount": "3.00",
       "description": "LinkedIn Premiun Subscription",
@@ -133,7 +133,7 @@
       "dueDate": "2024-12-25T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Apple",
       "amount": "1.50",
       "description": "Cloud Storage",
@@ -144,7 +144,7 @@
       "dueDate": "2024-12-21T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "YouTube",
       "amount": "6.00",
       "description": "YouTube Premiun Subscription",
@@ -155,7 +155,7 @@
       "dueDate": "2024-12-27T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Spotify",
       "amount": "3.90",
       "description": "Spotify individual subscription",
@@ -166,7 +166,7 @@
       "dueDate": "2024-11-30T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "title": "Spotify",
       "amount": "3.90",
       "description": "Spotify individual subscription",
@@ -179,25 +179,25 @@
   ],
   "incomes": [
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "source": "Salary",
       "amount": "1600.00",
       "date": "2024-10-05T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "source": "Salary",
       "amount": "1600.00",
       "date": "2024-11-05T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "source": "Salary",
       "amount": "1600.00",
       "date": "2024-12-05T12:00:00.000Z"
     },
     {
-      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "d9ea109c-ccc2-4eea-b0be-33d9b97437fb",
       "source": "Flydevs",
       "amount": "1600.00",
       "date": "2025-01-06T00:00:00.000Z"

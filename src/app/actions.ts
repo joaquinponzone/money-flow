@@ -7,15 +7,20 @@ import { desc, eq, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { Expense, NewExpense } from '@/types/expense'
 import { Income, NewIncome } from '@/types/income'
+import { getUserSession } from '@/lib/session'
 
 export const getExpenses = cache(async (): Promise<Expense[]> => {
+  const user = await getUserSession()
+  if (!user) return []
+
   const expensesResponse = await db
     .select()
     .from(expenses)
-    .orderBy(desc(expenses.dueDate));
+    .where(eq(expenses.userId, user.id))
+    .orderBy(desc(expenses.dueDate))
   
-  return expensesResponse;
-});
+  return expensesResponse
+})
 
 export const getExpensesByCategory = cache(async () => {
   const data = await db
@@ -109,16 +114,20 @@ export async function deleteExpense(id: string): Promise<void> {
 }
 
 export const getIncomes = cache(async (): Promise<Income[]> => {
+  const user = await getUserSession()
+  if (!user) return []
+
   const incomesResponse = await db
     .select()
     .from(incomes)
-    .orderBy(desc(incomes.date));
+    .where(eq(incomes.userId, user.id))
+    .orderBy(desc(incomes.date))
   
   return incomesResponse.map(income => ({
     ...income,
     amount: income.amount.toString()
-  }));
-});
+  }))
+})
 
 export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<Income> {
   const [insertedIncome] = await db.insert(incomes).values({
