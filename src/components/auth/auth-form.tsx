@@ -31,19 +31,15 @@ export default function AuthForm() {
 
   async function signInWithGoogle() {
     try {
-      const redirectTo = `${window.location.origin}/auth/callback?next=/`
-      console.log('redirectTo', redirectTo)
-
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
+          redirectTo: `${getURL()}auth/callback`,
+          scopes: 'email profile',
         },
       })
+
+      console.log('data', data)
 
       if (error) throw error
     } catch (error) {

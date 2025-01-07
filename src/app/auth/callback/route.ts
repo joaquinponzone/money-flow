@@ -5,24 +5,23 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   try {
     const code = requestUrl.searchParams.get('code')
-    const next = requestUrl.searchParams.get('next') || '/'
 
-    if (code) {
-      const supabase = await createClient()
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
-      
-      if (error) {
-        console.error('Auth error:', error)
-        // Redirect to login page of the current domain
-        return NextResponse.redirect(`${requestUrl.origin}/auth/login`)
-      }
+    if (!code) {
+      console.error('No code provided')
+      return NextResponse.redirect(`${requestUrl.origin}/auth/login`)
     }
 
-    // Redirect to the next page on the current domain
-    return NextResponse.redirect(`${requestUrl.origin}${next}`)
+    const supabase = await createClient()
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (error) {
+      console.error('Auth error:', error)
+      return NextResponse.redirect(`${requestUrl.origin}/auth/login`)
+    }
+
+    return NextResponse.redirect(`${requestUrl.origin}/`)
   } catch (error) {
     console.error('Callback error:', error)
-    // Redirect to login page of the current domain
     return NextResponse.redirect(`${requestUrl.origin}/auth/login`)
   }
 } 
