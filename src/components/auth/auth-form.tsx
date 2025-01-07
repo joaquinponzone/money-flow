@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createBrowserClient } from '@supabase/ssr'
 import { useState } from 'react'
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 export default function AuthForm() {
   const [email, setEmail] = useState('')
@@ -29,16 +31,15 @@ export default function AuthForm() {
 
   async function signInWithGoogle() {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${getURL()}auth/callback?next=/`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
+          redirectTo: `${getURL()}auth/callback`,
+          scopes: 'email profile',
         },
       })
+
+      console.log('data', data)
 
       if (error) throw error
     } catch (error) {
