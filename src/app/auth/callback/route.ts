@@ -2,8 +2,8 @@ import { createClient } from '@/lib/supabase'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
+  const requestUrl = new URL(request.url)
   try {
-    const requestUrl = new URL(request.url)
     const code = requestUrl.searchParams.get('code')
     const next = requestUrl.searchParams.get('next') || '/'
 
@@ -13,14 +13,16 @@ export async function GET(request: Request) {
       
       if (error) {
         console.error('Auth error:', error)
-        return NextResponse.redirect(new URL('/auth/login', requestUrl.origin))
+        // Redirect to login page of the current domain
+        return NextResponse.redirect(`${requestUrl.origin}/auth/login`)
       }
     }
 
-    // Always redirect to origin after successful auth
-    return NextResponse.redirect(new URL(next, requestUrl.origin))
+    // Redirect to the next page on the current domain
+    return NextResponse.redirect(`${requestUrl.origin}${next}`)
   } catch (error) {
     console.error('Callback error:', error)
-    return NextResponse.redirect(new URL('/auth/login', request.url))
+    // Redirect to login page of the current domain
+    return NextResponse.redirect(`${requestUrl.origin}/auth/login`)
   }
 } 

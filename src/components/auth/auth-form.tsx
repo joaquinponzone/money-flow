@@ -29,10 +29,12 @@ export default function AuthForm() {
 
   async function signInWithGoogle() {
     try {
+      const redirectTo = `${window.location.origin}/auth/callback?next=/`
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${getURL()}auth/callback?next=/`,
+          redirectTo,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
