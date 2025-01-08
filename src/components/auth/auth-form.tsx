@@ -4,8 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createBrowserClient } from '@supabase/ssr'
 import { useState } from 'react'
-import * as dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
 
 export default function AuthForm() {
   const [email, setEmail] = useState('')
@@ -22,11 +20,11 @@ export default function AuthForm() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          scopes: 'openid email profile',
+          redirectTo: `${process.env.VERCEL_URL}/auth/callback?next=/`,
         },
       })
 
-      console.log('data', data)
+      console.log('data after login', data)
 
       if (error) throw error
     } catch (error) {
@@ -44,7 +42,7 @@ export default function AuthForm() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL!,
+          emailRedirectTo: `${process.env.VERCEL_URL}/auth/callback`,
         },
       })
 
