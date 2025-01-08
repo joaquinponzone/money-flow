@@ -21,6 +21,10 @@ export default function AuthForm() {
         provider: 'google',
         options: {
           redirectTo: `${process.env.VERCEL_URL}/auth/callback?next=/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       })
 
