@@ -17,10 +17,10 @@ export default function AuthForm() {
 
   async function signInWithGoogle() {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${process.env.VERCEL_URL}/auth/callback?next=/`,
+          redirectTo: `${location.origin}/auth/callback`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -28,9 +28,9 @@ export default function AuthForm() {
         },
       })
 
-      console.log('data after login', data)
-
-      if (error) throw error
+      if (error) {
+        throw error
+      }
     } catch (error) {
       console.error('Error signing in with Google:', error)
       setMessage('Error signing in with Google')
@@ -46,7 +46,7 @@ export default function AuthForm() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${process.env.VERCEL_URL}/auth/callback`,
+          emailRedirectTo: `${location.origin}/auth/callback`,
         },
       })
 
