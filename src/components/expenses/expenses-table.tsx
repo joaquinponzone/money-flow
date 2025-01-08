@@ -56,6 +56,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                     <th className="text-left py-3 px-4">Due Date</th>
                     <th className="text-left py-3 px-4">Category</th>
                     <th className="text-left py-3 px-4">Status</th>
+                    <th className="text-left py-3 px-4">Date</th>
                     <th className="text-right py-3 px-4">Actions</th>
                   </tr>
                 </thead>
@@ -76,6 +77,9 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                         }`}>
                           {expense.paidAt ? `Paid on ${formatLocalDate(new Date(expense.paidAt))}` : 'Unpaid'}
                         </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        {expense.date ? formatLocalDate(new Date(expense.date)) : null}
                       </td>
                       <td className="py-3 px-4 text-right space-x-2">
                         <EditExpenseDialog expense={expense} />
@@ -100,6 +104,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                     <th className="text-left py-3 px-4">Due Date</th>
                     <th className="text-left py-3 px-4">Category</th>
                     <th className="text-left py-3 px-4">Status</th>
+                    <th className="text-left py-3 px-4">Created At</th>
                     <th className="text-right py-3 px-4">Actions</th>
                   </tr>
                 </thead>
@@ -120,6 +125,9 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                         }`}>
                           {expense.paidAt ? `Paid on ${formatLocalDate(new Date(expense.paidAt))}` : 'Unpaid'}
                         </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        {expense.createdAt ? formatLocalDate(new Date(expense.createdAt)) : null}
                       </td>
                       <td className="py-3 px-4 text-right space-x-2">
                         <EditExpenseDialog expense={expense} />

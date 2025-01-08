@@ -66,7 +66,7 @@ export const getExpenseById = cache(async (id: string): Promise<Expense | null> 
   };
 });
 
-export async function createExpense(expense: Omit<NewExpense, 'id'>): Promise<Expense> {
+export const createExpense = cache(async (expense: Omit<NewExpense, 'id'>): Promise<Expense> => {
   const [insertedExpense] = await db.insert(expenses).values({
     userId: expense.userId,
     title: expense.title,
@@ -82,9 +82,9 @@ export async function createExpense(expense: Omit<NewExpense, 'id'>): Promise<Ex
   revalidatePath('/')
 
   return insertedExpense;
-}
+})
 
-export async function updateExpense(expense: Expense): Promise<Expense> {
+export const updateExpense = cache(async (expense: Expense): Promise<Expense> => {
   const { id, ...updateData } = expense;
   const [updatedExpense] = await db.update(expenses)
     .set({
@@ -99,9 +99,9 @@ export async function updateExpense(expense: Expense): Promise<Expense> {
   revalidatePath('/')
 
   return updatedExpense;
-}
+})
 
-export async function deleteExpense(id: string): Promise<void> {
+export const deleteExpense = cache(async (id: string): Promise<void> => {
   try {
     await db.delete(expenses)
       .where(eq(expenses.id, Number(id)))
@@ -111,7 +111,7 @@ export async function deleteExpense(id: string): Promise<void> {
     console.error('Error deleting expense:', error)
     throw new Error('Failed to delete expense')
   }
-}
+})
 
 export const getIncomes = cache(async (): Promise<Income[]> => {
   const user = await getUserSession()
@@ -129,7 +129,7 @@ export const getIncomes = cache(async (): Promise<Income[]> => {
   }))
 })
 
-export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<Income> {
+export const createIncome = cache(async (income: Omit<NewIncome, 'id'>): Promise<Income> => {
   const [insertedIncome] = await db.insert(incomes).values({
     userId: income.userId,
     source: income.source,
@@ -142,9 +142,9 @@ export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<Incom
     ...insertedIncome,
     amount: insertedIncome.amount.toString()
   };
-}
+})
 
-export async function updateIncome(income: Income): Promise<Income> {
+export const updateIncome = cache(async (income: Income): Promise<Income> => {
   const { id, ...updateData } = income;
   const [updatedIncome] = await db.update(incomes)
     .set({
@@ -159,9 +159,9 @@ export async function updateIncome(income: Income): Promise<Income> {
     ...updatedIncome,
     amount: updatedIncome.amount.toString()
   };
-}
+})
 
-export async function deleteIncome(id: string): Promise<void> {
+export const deleteIncome = cache(async (id: string): Promise<void> => {
   try {
     await db.delete(incomes)
       .where(eq(incomes.id, Number(id)))
@@ -171,4 +171,45 @@ export async function deleteIncome(id: string): Promise<void> {
     console.error('Error deleting income:', error)
     throw new Error('Failed to delete income')
   }
-}
+})
+
+export const getCurrentMonthExpenses = cache(async (): Promise<Expense[]> => {
+  const user = await getUserSession()
+  if (!user) return []
+
+  const today = new Date()
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString()
+  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString()
+
+  const expensesResponse = await db
+    .select()
+    .from(expenses)
+    .where(sql`${expenses.userId} = ${user.id} 
+      AND ${expenses.date} >= ${startOfMonth}::timestamp 
+      AND ${expenses.date} <= ${endOfMonth}::timestamp`)
+    .orderBy(desc(expenses.date))
+  
+  return expensesResponse
+})
+
+export const getCurrentMonthIncomes = cache(async (): Promise<Income[]> => {
+  const user = await getUserSession()
+  if (!user) return []
+
+  const today = new Date()
+  const thirtyDaysAgo = new Date(today)
+  thirtyDaysAgo.setDate(today.getDate() - 30)
+
+  const incomesResponse = await db
+    .select()
+    .from(incomes)
+    .where(sql`${incomes.userId} = ${user.id} 
+      AND ${incomes.date} >= ${thirtyDaysAgo.toISOString()}::timestamp 
+      AND ${incomes.date} <= ${today.toISOString()}::timestamp`)
+    .orderBy(desc(incomes.date))
+  
+  return incomesResponse.map(income => ({
+    ...income,
+    amount: income.amount.toString()
+  }))
+})

@@ -9,6 +9,8 @@ export interface Expense {
   isRecurring: boolean | null;
   paidAt: Date | string | null;
   dueDate: Date | string | null;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface NewExpense {

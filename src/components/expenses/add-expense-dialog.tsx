@@ -89,7 +89,7 @@ export function AddExpenseDialog() {
       description: '',
       amount: '',
       category: '',
-      date: null,
+      date: new Date().toISOString(),
       dueDate: null,
       isRecurring: false,
       isPaid: false,
@@ -107,8 +107,7 @@ export function AddExpenseDialog() {
     try {
       const newExpense: NewExpense = {
         ...values,
-        date: values.date ? new Date(values.date).toISOString() : null,
-        dueDate: values.dueDate ? new Date(values.dueDate).toISOString() : null,
+        dueDate: values.isPaid ? new Date() : values.dueDate ? new Date(values.dueDate).toISOString() : null,
         paidAt: values.isPaid ? new Date() : null
       }
       
