@@ -1,124 +1,116 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatCurrency } from "@/lib/utils";
 import { Income } from "@/types/income";
-import { formatLocalDate, sortByDateDesc, isCurrentMonth } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { AddIncomeDialog } from "./add-income-dialog";
-import { EditIncomeDialog } from "./edit-income-dialog";
-import { DeleteIncomeDialog } from "./delete-income-dialog";
+import { format } from "date-fns";
+import { Pencil, Trash } from "lucide-react";
 
 interface IncomesTableProps {
   incomes: Income[];
+  onEdit?: (income: Income) => void;
+  onDelete?: (income: Income) => void;
 }
 
-export function IncomesTable({ incomes }: IncomesTableProps) {
-  const currentMonthIncomes = incomes.filter(income => 
-    income.date && isCurrentMonth(income.date)
-  );
-
-  const incomesHistory = incomes
-    .filter(income => income.date && !isCurrentMonth(income.date))
-    .sort((a, b) => sortByDateDesc(a.date, b.date));
-
+export function IncomesTable({ incomes, onEdit, onDelete }: IncomesTableProps) {
   return (
-    <div className="rounded-md border">
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-base font-semibold">
-            Monthly Overview
-            <p className="text-sm font-normal text-muted-foreground mt-1">
-              Manage your income sources and track your earnings.
-            </p>
-          </h2>
-          <AddIncomeDialog />
-        </div>
-        <Tabs defaultValue="monthly" className="w-full">
-          <TabsList>
-            <TabsTrigger value="monthly">Monthly Incomes</TabsTrigger>
-            <TabsTrigger value="history">Income History</TabsTrigger>
-          </TabsList>
-          <TabsContent value="monthly">
-            <div className="rounded-md border">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Source</th>
-                    <th className="text-left py-3 px-4">Amount</th>
-                    <th className="text-left py-3 px-4">Date</th>
-                    <th className="text-right py-3 px-4">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentMonthIncomes.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="py-8 text-center text-muted-foreground">
-                        No incomes for the current month
-                      </td>
-                    </tr>
-                  ) : (
-                    currentMonthIncomes.map((income) => (
-                      <tr key={income.id} className="border-b">
-                        <td className="py-3 px-4">{income.source}</td>
-                        <td className="py-3 px-4 font-medium">${income.amount}</td>
-                        <td className="py-3 px-4">
-                          {formatLocalDate(income.date)}
-                        </td>
-                        <td className="py-3 px-4 text-right space-x-2">
-                          <EditIncomeDialog income={income} />
-                          <DeleteIncomeDialog 
-                            incomeId={income.id} 
-                            incomeSource={income.source} 
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+    <>
+      {/* Mobile view - Cards */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {incomes.map((income) => (
+          <div
+            key={income.id}
+            className="bg-card rounded-lg shadow-sm p-4 space-y-3"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-medium">{income.source}</h3>
+                <p className="text-2xl font-semibold text-primary">
+                  {formatCurrency(Number(income.amount))}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                {onEdit && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(income)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                )}
+                {onDelete && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDelete(income)}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
-          </TabsContent>
-          <TabsContent value="history">
-            <div className="rounded-md border">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Source</th>
-                    <th className="text-left py-3 px-4">Amount</th>
-                    <th className="text-left py-3 px-4">Date</th>
-                    <th className="text-right py-3 px-4">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {incomesHistory.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="py-8 text-center text-muted-foreground">
-                        No income history available
-                      </td>
-                    </tr>
-                  ) : (
-                    incomesHistory.map((income) => (
-                      <tr key={income.id} className="border-b">
-                        <td className="py-3 px-4">{income.source}</td>
-                        <td className="py-3 px-4 font-medium">${income.amount}</td>
-                        <td className="py-3 px-4">
-                          {formatLocalDate(income.date)}
-                        </td>
-                        <td className="py-3 px-4 text-right space-x-2">
-                          <EditIncomeDialog income={income} />
-                          <DeleteIncomeDialog 
-                            incomeId={income.id} 
-                            incomeSource={income.source} 
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+            <div className="text-sm text-muted-foreground">
+              {income.date ? format(new Date(income.date), "MMM dd, yyyy") : "No date"}
             </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        ))}
       </div>
-    </div>
+
+      {/* Desktop view - Table */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Source</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {incomes.map((income) => (
+              <TableRow key={income.id}>
+                <TableCell>{income.source}</TableCell>
+                <TableCell>{formatCurrency(Number(income.amount))}</TableCell>
+                <TableCell>
+                  {income.date ? format(new Date(income.date), "MMM dd, yyyy") : "No date"}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    {onEdit && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onEdit(income)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {onDelete && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDelete(income)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 } 

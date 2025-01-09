@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { SignOutButton } from "./sign-out";
 import { createBrowserClient } from "@supabase/ssr";
 import { useEffect, useState } from "react";
+import { HomeIcon, ListMinus, ListPlus } from "lucide-react";
+import { ThemeToggle } from "./theme-toggle";
 
 const navItems = [
   { href: "/", label: "Dashboard" },
@@ -34,21 +36,29 @@ export function MainNav() {
     return null;
   }
 
+  const icons = {
+    Dashboard: <HomeIcon className="size-8" />,
+    Expenses: <ListMinus className="size-8" />,
+    Incomes: <ListPlus className="size-8" />,
+  };
+
   return (
-    <nav className="flex items-center space-x-4 lg:space-x-6 mx-24">
+    <nav className="flex items-center space-x-6 justify-start mx-4 md:mx-24 w-full">
       {navItems.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className={`text-sm font-medium transition-colors hover:text-primary ${
+          className={`text-sm font-medium transition-colors ${
             pathname === item.href
-              ? "text-primary font-black"
-              : "text-muted-foreground"
+              ? "text-secondary font-black bg-primary rounded-lg p-2"
+              : "text-foreground"
           }`}
         >
-          {item.label}
+          <span className="hidden md:block">{item.label}</span>
+          <span className="block md:hidden">{icons[item.label as keyof typeof icons]}</span>
         </Link>
       ))}
+      <ThemeToggle />
       <SignOutButton />
     </nav>
   );

@@ -3,6 +3,7 @@
 import { createBrowserClient } from "@supabase/ssr"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
+import { LogOutIcon } from "lucide-react"
 
 export function SignOutButton() {
   const router = useRouter()
@@ -30,8 +31,14 @@ export function SignOutButton() {
   }
 
   return (
-    <Button variant="ghost" onClick={handleSignOut}>
-      Sign Out
-    </Button>
+    <>
+      <Button variant="ghost" className="hidden md:block" onClick={handleSignOut}>
+        Sign Out
+      </Button>
+      <span className={`text-sm font-medium transition-colors text-foreground block md:hidden`}>
+          <LogOutIcon className="size-6" />
+        </span>
+    </>
+
   )
-} 
+}

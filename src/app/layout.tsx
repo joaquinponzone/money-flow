@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { MainNav } from "@/components/main-nav";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { ThemeProvider } from "next-themes";
 import { getUserSession } from "@/lib/session";
 
@@ -38,9 +37,8 @@ export default async function RootLayout({
         >
           {session && (
             <div className="border-b">
-              <div className="container flex h-16 items-center justify-between">
+              <div className="container flex h-20 md:h-16 items-center justify-between w-screen mx-4">
                 <MainNav />
-                <ThemeToggle />
               </div>
             </div>
           )}
