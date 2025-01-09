@@ -14,17 +14,27 @@ export async function createClient() {
         },
         set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value, ...options })
-          } catch (error: unknown) {
-            // Handle cookie errors
+            cookieStore.set({
+              name,
+              value,
+              ...options,
+              sameSite: 'lax',
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 60 * 60 * 24 * 7 // 1 week
+            })
+          } catch (error) {
             console.error('Error setting cookie:', error)
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: '', ...options })
-          } catch (error: unknown) {
-            // Handle cookie errors
+            cookieStore.set({
+              name,
+              value: '',
+              ...options,
+              maxAge: 0
+            })
+          } catch (error) {
             console.error('Error removing cookie:', error)
           }
         },

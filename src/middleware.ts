@@ -47,17 +47,28 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // For protected routes, verify the session
-  const { data: { session } } = await supabase.auth.getSession()
+  try {
+    // For protected routes, verify the session
+    const { data: { session }, error } = await supabase.auth.getSession()
 
-  // If no session and trying to access protected route, redirect to login
-  if (!session) {
+    // If no session or error, redirect to login
+    if (!session || error) {
+      // Clear any invalid auth cookies
+      response.cookies.set('sb-access-token', '', { maxAge: 0 })
+      response.cookies.set('sb-refresh-token', '', { maxAge: 0 })
+      
+      const redirectUrl = new URL('/auth/login', request.url)
+      redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // Allow access to protected routes if authenticated
+    return response
+  } catch (error) {
+    console.error('Auth error:', error)
     const redirectUrl = new URL('/auth/login', request.url)
     return NextResponse.redirect(redirectUrl)
   }
-
-  // Allow access to protected routes if authenticated
-  return response
 }
 
 export const config = {

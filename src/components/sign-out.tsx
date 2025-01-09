@@ -13,7 +13,7 @@ export function SignOutButton() {
 
   async function handleSignOut() {
     try {
-      const { error } = await supabase.auth.signOut()
+      const { error } = await supabase.auth.signOut({ scope: 'global' })
       if (error) {
         console.error('Error signing out:', error)
         return
@@ -22,8 +22,8 @@ export function SignOutButton() {
       // Clear any client-side state
       router.refresh()
       
-      // Redirect to login page
-      router.push('/auth/login')
+      // Force a hard reload to clear all state
+      window.location.href = '/auth/login'
     } catch (error) {
       console.error('Unexpected error during sign out:', error)
     }

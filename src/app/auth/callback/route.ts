@@ -12,7 +12,11 @@ export async function GET(request: Request) {
     
     if (error) {
       console.error('Error exchanging code for session:', error)
-      return NextResponse.redirect(`${new URL(request.url).origin}/auth/auth-code-error`)
+      // Clear any invalid auth cookies
+      const response = NextResponse.redirect(`${new URL(request.url).origin}/auth/auth-code-error`)
+      response.cookies.set('sb-access-token', '', { maxAge: 0 })
+      response.cookies.set('sb-refresh-token', '', { maxAge: 0 })
+      return response
     }
 
     return NextResponse.redirect(new URL(next, request.url))
