@@ -1,17 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getExpenses, getIncomes, getCurrentMonthExpenses, getCurrentMonthIncomes } from "./actions";
+import { getExpenses, getCurrentMonthExpenses, getCurrentMonthIncomes } from "./actions";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon } from "lucide-react";
 import BudgetOverview from "@/components/budget-overview";
 import { UpcomingExpenses } from "@/components/upcoming-expenses";
+import { getUserSession } from "@/lib/session";
 
 export default async function DashboardPage() {
-  const [expenses, incomes, currentMonthExpenses, currentMonthIncomes] = await Promise.all([
-    getExpenses(),
-    getIncomes(),
-    getCurrentMonthExpenses(),
-    getCurrentMonthIncomes()
-  ]);
+  const user = await getUserSession()
+  const userId = user?.id
+  
+  const [allExpenses, currentMonthExpenses, incomes] = await Promise.all([
+    getExpenses(userId),
+    getCurrentMonthExpenses(userId),
+    getCurrentMonthIncomes(userId)
+  ])
 
   const totalExpenses = currentMonthExpenses.reduce((sum, expense) => 
     sum + parseFloat(expense.amount), 0
@@ -23,7 +26,7 @@ export default async function DashboardPage() {
 
   const unpaidExpenses = totalExpenses - paidExpenses;
 
-  const totalIncome = currentMonthIncomes.reduce((sum, income) => 
+  const totalIncome = incomes.reduce((sum, income) => 
     sum + parseFloat(income.amount), 0
   );
 
@@ -36,11 +39,11 @@ export default async function DashboardPage() {
     : "0.0";
 
   // Helper to get last 6 months including current month
-  function getLast6Months() {
+  function getLastMonths(months_history: number) {
     const months = [];
     const today = new Date();
     
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < months_history; i++) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
       months.push({
         month: date.toLocaleString('default', { month: 'short' }),
@@ -51,8 +54,8 @@ export default async function DashboardPage() {
     return months.reverse();
   }
 
-  const budgetOverviewData = getLast6Months().map(({ month, year }) => {
-    const monthExpenses = expenses.filter(expense => {
+  const budgetOverviewData = getLastMonths(6).map(({ month, year }) => {
+    const monthExpenses = allExpenses.filter(expense => {
       if (!expense.date) return false;
       const expenseDate = new Date(expense.date);
       return expenseDate.getMonth() === new Date(`${month} 1, ${year}`).getMonth() 
@@ -77,8 +80,21 @@ export default async function DashboardPage() {
     };
   });
 
+  const budgetOverviewDataMobile = getLastMonths(2).map(({ month }) => {
+    return {
+      month: month,
+      expenses: currentMonthExpenses.reduce((sum, expense) => 
+        sum + parseFloat(expense.amount), 0
+      ),
+      income: incomes.reduce((sum, income) => 
+        sum + parseFloat(income.amount), 0
+      )
+    }
+  })
+
+
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto py-10 px-4 space-y-6 ">
       <h1 className="text-2xl font-bold">Financial Dashboard</h1>
       
       <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
@@ -125,7 +141,12 @@ export default async function DashboardPage() {
       </div>
 
       <div className="rounded-md border bg-card">
-        <div className="p-6">
+        <div className="block md:hidden p-6">
+          <h3 className="text-lg font-semibold mb-4">Budget Overview</h3>
+          <BudgetOverview data={budgetOverviewDataMobile}/>
+        </div>
+
+        <div className="hidden md:block p-6">
           <h3 className="text-lg font-semibold mb-4">Budget Overview</h3>
           <BudgetOverview data={budgetOverviewData}/>
         </div>
@@ -137,13 +158,13 @@ export default async function DashboardPage() {
             <CardTitle className="flex items-center justify-between">
               Income Sources
               <span className="text-sm font-normal text-muted-foreground">
-                Last 30 days
+                Current Month
               </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {currentMonthIncomes.map((income) => (
+              {incomes.map((income) => (
                 <div key={income.id} className="flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <div className="space-y-0.5">
@@ -218,7 +239,7 @@ export default async function DashboardPage() {
         </Card>
 
         <div>
-          <UpcomingExpenses expenses={expenses} />
+          <UpcomingExpenses expenses={allExpenses} />
         </div>
       </div>
     </div>

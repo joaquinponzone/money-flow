@@ -24,11 +24,11 @@ export function MainNav() {
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
-      
+
       const { data: { user } } = await supabase.auth.getUser();
       setHasSession(!!user);
     }
-    
+
     checkSession();
   }, []);
 
@@ -37,29 +37,37 @@ export function MainNav() {
   }
 
   const icons = {
-    Dashboard: <HomeIcon className="size-8" />,
-    Expenses: <ListMinus className="size-8" />,
-    Incomes: <ListPlus className="size-8" />,
+    Dashboard: <HomeIcon className="size-7" />,
+    Expenses: <ListMinus className="size-7" />,
+    Incomes: <ListPlus className="size-7" />,
   };
 
   return (
-    <nav className="flex items-center space-x-6 justify-start mx-4 md:mx-24 w-full">
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={`text-sm font-medium transition-colors ${
-            pathname === item.href
-              ? "text-secondary font-black bg-primary rounded-lg p-2"
-              : "text-foreground"
-          }`}
-        >
-          <span className="hidden md:block">{item.label}</span>
-          <span className="block md:hidden">{icons[item.label as keyof typeof icons]}</span>
-        </Link>
-      ))}
-      <ThemeToggle />
-      <SignOutButton />
+    <nav className="sticky top-0 z-50 w-full border-b-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-16 md:h-14 items-center justify-between px-4">
+        <div className="flex items-center space-x-4">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors md:hover:bg-accent ${
+                pathname === item.href
+                  ? "bg-primary text-primary-foreground"
+                  : "text-foreground md:hover:text-foreground"
+              }`}
+            >
+              <span className="md:hidden">
+                {icons[item.label as keyof typeof icons]}
+              </span>
+              <span className="hidden md:inline">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+        <div className="flex items-center space-x-6">
+          <ThemeToggle />
+          <SignOutButton />
+        </div>
+      </div>
     </nav>
   );
 }

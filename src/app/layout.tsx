@@ -36,13 +36,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           {session && (
-            <div className="border-b">
-              <div className="container flex h-20 md:h-16 items-center justify-between w-screen mx-4">
-                <MainNav />
-              </div>
-            </div>
+            <MainNav />
           )}
-          <main>{children}</main>
+          {children}
         </ThemeProvider>
       </body>
     </html>

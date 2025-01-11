@@ -22,7 +22,7 @@ import { useState } from "react";
 import { createExpense } from "@/app/actions";
 import { Expense } from "@/types/expense";
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Loader2, PlusCircle } from "lucide-react";
 
 interface AddFromRecurringExpenseDialogProps {
   recurringExpenses: Expense[];
@@ -95,7 +95,10 @@ export function AddFromRecurringExpenseDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add from Recurring</Button>
+        <Button variant="secondary" id="add-recurring-expense-trigger" className="w-full">
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Add Recurring Expense
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

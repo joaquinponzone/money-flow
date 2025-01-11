@@ -25,7 +25,7 @@ import * as z from "zod"
 import { useState } from "react"
 import { createIncome } from "@/app/actions"
 import { NewIncome } from "@/types/income"
-import { Loader2 } from "lucide-react"
+import { Loader2, PlusCircle } from "lucide-react"
 
 const formSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
@@ -69,7 +69,10 @@ export function AddIncomeDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Income</Button>
+        <Button>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Add Income
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

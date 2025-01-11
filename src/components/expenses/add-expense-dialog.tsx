@@ -36,6 +36,7 @@ import { createExpense } from "@/app/actions"
 import { NewExpense } from "@/types/expense"
 import { Loader2 } from "lucide-react"
 import { createBrowserClient } from "@supabase/ssr"
+import { PlusCircle } from "lucide-react"
 
 const formSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
@@ -113,7 +114,7 @@ export function AddExpenseDialog() {
       
       await createExpense(newExpense)
       setOpen(false)
-      form.reset()
+      // form.reset()
     } catch (error) {
       console.error("Failed to create expense:", error)
     } finally {
@@ -124,7 +125,10 @@ export function AddExpenseDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Expense</Button>
+        <Button id="add-expense-trigger" className="w-full">
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Add Expense
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

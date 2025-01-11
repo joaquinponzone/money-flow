@@ -1,57 +1,66 @@
 'use server'
 
-import { cache } from 'react'
+import { unstable_cache } from 'next/cache'
 import { db } from '@/db'
 import { expenses, incomes } from '@/db/schema'
 import { desc, eq, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { Expense, NewExpense } from '@/types/expense'
 import { Income, NewIncome } from '@/types/income'
-import { getUserSession } from '@/lib/session'
 
-export const getExpenses = cache(async (): Promise<Expense[]> => {
-  const user = await getUserSession()
-  if (!user) return []
+export const getExpenses = unstable_cache(
+  async (userId: string | undefined): Promise<Expense[]> => {
+    if (!userId) return []
 
-  const expensesResponse = await db
-    .select()
-    .from(expenses)
-    .where(eq(expenses.userId, user.id))
-    .orderBy(desc(expenses.dueDate))
-  
-  return expensesResponse
-})
+    const expensesResponse = await db
+      .select()
+      .from(expenses)
+      .where(eq(expenses.userId, userId))
+      .orderBy(desc(expenses.dueDate))
+    
+    return expensesResponse
+  },
+  ['expenses'],
+  { revalidate: 60, tags: ['expenses'] }
+)
 
-export const getExpensesByCategory = cache(async () => {
-  const data = await db
-    .select({
-      name: expenses.category,
-      value: sql<number>`sum(${expenses.amount})`,
-      expenses: sql`json_agg(json_build_object(
-        'id', ${expenses.id},
-        'name', ${expenses.description}, 
-        'amount', ${expenses.amount},
-        'dueDate', ${expenses.dueDate},
-        'description', ${expenses.description}
-      ))`
-    })
-    .from(expenses)
-    .groupBy(expenses.category);
+export const getExpensesByCategory = unstable_cache(
+  async (userId: string | undefined) => {
+    if (!userId) return []
 
-  return data.map(category => ({
-    name: category.name,
-    value: Number(category.value),
-    expenses: category.expenses as Array<{
-      id: string;
-      name: string;
-      amount: number;
-      dueDate: Date;
-      description: string | null;
-    }>
-  }));
-});
+    const data = await db
+      .select({
+        name: expenses.category,
+        value: sql<number>`sum(${expenses.amount})`,
+        expenses: sql`json_agg(json_build_object(
+          'id', ${expenses.id},
+          'name', ${expenses.description}, 
+          'amount', ${expenses.amount},
+          'dueDate', ${expenses.dueDate},
+          'description', ${expenses.description}
+        ))`
+      })
+      .from(expenses)
+      .where(eq(expenses.userId, userId))
+      .groupBy(expenses.category);
 
-export const getExpenseById = cache(async (id: string): Promise<Expense | null> => {
+    return data.map(category => ({
+      name: category.name,
+      value: Number(category.value),
+      expenses: category.expenses as Array<{
+        id: string;
+        name: string;
+        amount: number;
+        dueDate: Date;
+        description: string | null;
+      }>
+    }));
+  }, 
+  ['expenses-by-category'],
+  { revalidate: 60, tags: ['expenses'] }
+);
+
+export const getExpenseById = unstable_cache(async (id: string): Promise<Expense | null> => {
   const results = await db
     .select()
     .from(expenses)
@@ -64,9 +73,9 @@ export const getExpenseById = cache(async (id: string): Promise<Expense | null> 
     ...results[0],
     amount: results[0].amount.toString()
   };
-});
+}, ['expense-by-id'], { revalidate: 60, tags: ['expenses'] });
 
-export const createExpense = cache(async (expense: Omit<NewExpense, 'id'>): Promise<Expense> => {
+export async function createExpense(expense: Omit<NewExpense, 'id'>): Promise<Expense> {
   const [insertedExpense] = await db.insert(expenses).values({
     userId: expense.userId,
     title: expense.title,
@@ -82,9 +91,9 @@ export const createExpense = cache(async (expense: Omit<NewExpense, 'id'>): Prom
   revalidatePath('/')
 
   return insertedExpense;
-})
+}
 
-export const updateExpense = cache(async (expense: Expense): Promise<Expense> => {
+export async function updateExpense(expense: Expense): Promise<Expense> {
   const { id, ...updateData } = expense;
   const [updatedExpense] = await db.update(expenses)
     .set({
@@ -99,9 +108,9 @@ export const updateExpense = cache(async (expense: Expense): Promise<Expense> =>
   revalidatePath('/')
 
   return updatedExpense;
-})
+}
 
-export const deleteExpense = cache(async (id: string): Promise<void> => {
+export async function deleteExpense(id: string): Promise<void> {
   try {
     await db.delete(expenses)
       .where(eq(expenses.id, Number(id)))
@@ -111,25 +120,28 @@ export const deleteExpense = cache(async (id: string): Promise<void> => {
     console.error('Error deleting expense:', error)
     throw new Error('Failed to delete expense')
   }
-})
+}
 
-export const getIncomes = cache(async (): Promise<Income[]> => {
-  const user = await getUserSession()
-  if (!user) return []
+export const getIncomes = unstable_cache(
+  async (userId: string | undefined): Promise<Income[]> => {
+    if (!userId) return []
 
-  const incomesResponse = await db
-    .select()
-    .from(incomes)
-    .where(eq(incomes.userId, user.id))
-    .orderBy(desc(incomes.date))
-  
-  return incomesResponse.map(income => ({
-    ...income,
-    amount: income.amount.toString()
-  }))
-})
+    const incomesResponse = await db
+      .select()
+      .from(incomes)
+      .where(eq(incomes.userId, userId))
+      .orderBy(desc(incomes.date))
+    
+    return incomesResponse.map(income => ({
+      ...income,
+      amount: income.amount.toString()
+    }))
+  },
+  ['incomes'],
+  { revalidate: 60, tags: ['incomes'] }
+)
 
-export const createIncome = cache(async (income: Omit<NewIncome, 'id'>): Promise<Income> => {
+export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<Income> {
   const [insertedIncome] = await db.insert(incomes).values({
     userId: income.userId,
     source: income.source,
@@ -142,9 +154,9 @@ export const createIncome = cache(async (income: Omit<NewIncome, 'id'>): Promise
     ...insertedIncome,
     amount: insertedIncome.amount.toString()
   };
-})
+}
 
-export const updateIncome = cache(async (income: Income): Promise<Income> => {
+export async function updateIncome(income: Income): Promise<Income> {
   const { id, ...updateData } = income;
   const [updatedIncome] = await db.update(incomes)
     .set({
@@ -159,9 +171,9 @@ export const updateIncome = cache(async (income: Income): Promise<Income> => {
     ...updatedIncome,
     amount: updatedIncome.amount.toString()
   };
-})
+}
 
-export const deleteIncome = cache(async (id: string): Promise<void> => {
+export async function deleteIncome(id: string): Promise<void> {
   try {
     await db.delete(incomes)
       .where(eq(incomes.id, Number(id)))
@@ -171,45 +183,51 @@ export const deleteIncome = cache(async (id: string): Promise<void> => {
     console.error('Error deleting income:', error)
     throw new Error('Failed to delete income')
   }
-})
+}
 
-export const getCurrentMonthExpenses = cache(async (): Promise<Expense[]> => {
-  const user = await getUserSession()
-  if (!user) return []
+export const getCurrentMonthExpenses = unstable_cache(
+  async (userId: string | undefined): Promise<Expense[]> => {
+    if (!userId) return []
 
-  const today = new Date()
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString()
-  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString()
+    const today = new Date()
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString()
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString()
 
-  const expensesResponse = await db
-    .select()
-    .from(expenses)
-    .where(sql`${expenses.userId} = ${user.id} 
-      AND ${expenses.date} >= ${startOfMonth}::timestamp 
-      AND ${expenses.date} <= ${endOfMonth}::timestamp`)
-    .orderBy(desc(expenses.date))
-  
-  return expensesResponse
-})
+    const expensesResponse = await db
+      .select()
+      .from(expenses)
+      .where(sql`${expenses.userId} = ${userId} 
+        AND ${expenses.date} >= ${startOfMonth}::timestamp 
+        AND ${expenses.date} <= ${endOfMonth}::timestamp`)
+      .orderBy(desc(expenses.date))
+    
+    return expensesResponse
+  },
+  ['current-month-expenses'],
+  { revalidate: 60, tags: ['expenses'] }
+)
 
-export const getCurrentMonthIncomes = cache(async (): Promise<Income[]> => {
-  const user = await getUserSession()
-  if (!user) return []
+export const getCurrentMonthIncomes = unstable_cache(
+  async (userId: string | undefined): Promise<Income[]> => {
+    if (!userId) return []
 
-  const today = new Date()
-  const thirtyDaysAgo = new Date(today)
-  thirtyDaysAgo.setDate(today.getDate() - 30)
+    const today = new Date()
+    const thirtyDaysAgo = new Date(today)
+    thirtyDaysAgo.setDate(today.getDate() - 30)
 
-  const incomesResponse = await db
-    .select()
-    .from(incomes)
-    .where(sql`${incomes.userId} = ${user.id} 
-      AND ${incomes.date} >= ${thirtyDaysAgo.toISOString()}::timestamp 
-      AND ${incomes.date} <= ${today.toISOString()}::timestamp`)
-    .orderBy(desc(incomes.date))
-  
-  return incomesResponse.map(income => ({
-    ...income,
-    amount: income.amount.toString()
-  }))
-})
+    const incomesResponse = await db
+      .select()
+      .from(incomes)
+      .where(sql`${incomes.userId} = ${userId} 
+        AND ${incomes.date} >= ${thirtyDaysAgo.toISOString()}::timestamp 
+        AND ${incomes.date} <= ${today.toISOString()}::timestamp`)
+      .orderBy(desc(incomes.date))
+    
+    return incomesResponse.map(income => ({
+      ...income,
+      amount: income.amount.toString()
+    }))
+  },
+  ['current-month-incomes'],
+  { revalidate: 60, tags: ['incomes'] }
+)
