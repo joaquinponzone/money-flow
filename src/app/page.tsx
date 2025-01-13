@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getExpenses, getCurrentMonthExpenses, getCurrentMonthIncomes } from "./actions";
-import { formatCurrency } from "@/lib/utils";
-import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon } from "lucide-react";
+import { cn, formatCurrency } from "@/lib/utils";
+import { XIcon, CheckIcon, Scale, FilePlus, FileMinus } from "lucide-react";
 import BudgetOverview from "@/components/budget-overview";
 import { UpcomingExpenses } from "@/components/upcoming-expenses";
 import { getUserSession } from "@/lib/session";
@@ -95,47 +95,45 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto py-10 px-4 space-y-6 ">
-      <h1 className="text-2xl font-bold">Financial Dashboard</h1>
+      {/* <h1 className="text-3xl font-bold">Dashboard</h1> */}
       
       <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-            <ArrowUpIcon className="h-4 w-4 text-green-500" />
+            <CardTitle className="font-normal">Total Income</CardTitle>
+            <FilePlus className="size-5 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalIncome)}</div>
+            <div className="text-2xl font-bold"><span className="font-mono">{formatCurrency(totalIncome)}</span></div>
             <p className="text-xs text-muted-foreground">Monthly total</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-            <ArrowDownIcon className="h-4 w-4 text-red-500" />
+            <CardTitle className="font-normal">Total Expenses</CardTitle>
+            <FileMinus className="size-5 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalExpenses)}</div>
-            <div className="flex justify-between items-center">
-              <p className="text-xs text-muted-foreground">{expensesPercentage}% of income</p>
-              <p className="text-xs">
-                <span className="text-green-500">{formatCurrency(paidExpenses)} paid</span>
-                {unpaidExpenses > 0 && (
-                  <span className="text-red-500 ml-2">{formatCurrency(unpaidExpenses)} pending</span>
-                )}
-              </p>
+            <div className="text-2xl font-bold"><span className="font-mono">{formatCurrency(totalExpenses)}</span></div>
+            <div className="flex justify-between items-start">
+              <p className="text-xs text-muted-foreground"><span className="font-mono">{expensesPercentage}%</span> of income</p>
+              {unpaidExpenses > 0 && (
+                <span className="grid grid-cols-1 text-xs text-neutral-500 font-thin">Pending:<span className="text-red-500 font-mono">{formatCurrency(unpaidExpenses)}</span></span>
+              )}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Balance</CardTitle>
-            <TrendingUpIcon className="h-4 w-4 text-blue-500" />
+            <CardTitle className="font-normal">Monthly Balance</CardTitle>
+            {/* <TrendingUpIcon className="h-4 w-4 text-blue-500" /> */}
+            <Scale className="size-6 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(balance)}</div>
-            <p className="text-xs text-muted-foreground">{balancePercentage}% of income</p>
+            <div className="text-3xl font-bold font-mono">{formatCurrency(balance)}</div>
+            <p className={cn("text-xs text-muted-foreground", balance > 0 ? "" : "text-red-500")}>{balancePercentage}% available for discretionary expenses</p>
           </CardContent>
         </Card>
       </div>
@@ -219,11 +217,10 @@ export default async function DashboardPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">{formatCurrency(parseFloat(expense.amount))}</span>
-                      {expense.paidAt ? 
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> : 
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                      }
+                      <span className={cn("font-bold", expense.paidAt ? "text-green-500" : "text-red-500")}>{formatCurrency(parseFloat(expense.amount))}</span>
+                      <span className="w-1.5 h-1.5 rounded-full">
+                        {expense.paidAt ? <CheckIcon className="h-2 w-2 text-green-500" /> : <XIcon className="h-2 w-2 text-red-500" />}
+                      </span>
                     </div>
                   </div>
                   <div className="h-[1px] bg-border" />
