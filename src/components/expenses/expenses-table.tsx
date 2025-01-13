@@ -41,13 +41,13 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
         <AddExpensePopover recurringExpenses={recurringExpenses} />
       </div>
 
-      <Tabs defaultValue="monthly" className="w-full">
+      <Tabs defaultValue="monthly" className="w-full bg-background p-4 rounded-lg">
         <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="monthly">Monthly Expenses</TabsTrigger>
           <TabsTrigger value="history">Expenses History</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="monthly" className="bg-background rounded-lg">
+        <TabsContent value="monthly">
           {/* Mobile view - Cards */}
           <div className="grid gap-4 md:hidden">
             {currentMonthExpenses.map((expense) => (
@@ -101,7 +101,8 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentMonthExpenses.map((expense) => (
+                {currentMonthExpenses.map((expense) => {
+                  return (
                   <TableRow key={expense.id}>
                     <TableCell>
                       <div>
@@ -110,11 +111,15 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                       </div>
                     </TableCell>
                     <TableCell className="font-mono">${expense.amount}</TableCell>
-                    <TableCell className="capitalize">{expense.category || 'Uncategorized'}</TableCell>
+                    <TableCell className="capitalize">
+                      <Badge variant="outline" className={`text-xs`}>
+                        {expense.category || 'Uncategorized'}
+                      </Badge>
+                    </TableCell>
                     <TableCell>{formatLocalDate(expense.dueDate)}</TableCell>
                     <TableCell>
-                      <span className={`text-sm ${expense.paidAt ? 'text-green-500' : 'text-red-500'}`}>
-                        {expense.paidAt ? 'Paid' : 'Unpaid'}
+                      <span className={`text-xs ${expense.paidAt ? 'text-green-600 dark:text-green-300' : 'text-red-500 font-bold'}`}>
+                        {expense.paidAt ? `Paid at ${formatLocalDate(expense.paidAt)}` : 'Unpaid'}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
@@ -124,7 +129,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                )})}
               </TableBody>
             </Table>
             {currentMonthExpenses.length === 0 && (

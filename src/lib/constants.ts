@@ -1,7 +1,11 @@
 export const ExpenseCategories = [
-  'Food',
-  'Transport',
-  'Entertainment',
+  'Housing',
   'Utilities',
+  'Food',
+  'Transportation',
+  'Insurance',
+  'Healthcare',
+  'Entertainment',
   'Other'
 ]
+
