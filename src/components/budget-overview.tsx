@@ -21,6 +21,7 @@ export default function BudgetOverview({ data }: BudgetOverviewProps) {
           fontSize={12}
           tickLine={false}
           axisLine={false}
+          className="bg-blue-200"
         />
         <YAxis
           stroke="hsl(var(--chart-foreground))"

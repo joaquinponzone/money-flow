@@ -47,7 +47,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
           <TabsTrigger value="history">Expenses History</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="monthly">
+        <TabsContent value="monthly" className="bg-background rounded-lg">
           {/* Mobile view - Cards */}
           <div className="grid gap-4 md:hidden">
             {currentMonthExpenses.map((expense) => (

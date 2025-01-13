@@ -43,8 +43,8 @@ export function MainNav() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-16 md:h-14 items-center justify-between px-4">
+    <nav className="sticky top-0 z-50 w-full shadow-md bg-background backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-16 md:h-14 items-center justify-between px-4 max-w-7xl mx-auto">
         <div className="flex items-center space-x-4">
           {navItems.map((item) => (
             <Link
@@ -52,7 +52,7 @@ export function MainNav() {
               href={item.href}
               className={`flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors md:hover:bg-accent ${
                 pathname === item.href
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-accent border"
                   : "text-foreground md:hover:text-foreground"
               }`}
             >

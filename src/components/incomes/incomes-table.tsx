@@ -75,7 +75,7 @@ export function IncomesTable({ incomes }: IncomesTableProps) {
 
       {/* Desktop view - Table */}
       <div className="hidden md:block">
-        <Table>
+        <Table className="bg-background rounded-lg">
           <TableHeader>
             <TableRow>
               <TableHead>Source</TableHead>
