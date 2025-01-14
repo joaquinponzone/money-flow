@@ -8,4 +8,3 @@ export const ExpenseCategories = [
   'Entertainment',
   'Other'
 ]
-

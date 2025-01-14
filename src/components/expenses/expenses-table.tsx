@@ -1,7 +1,7 @@
 "use client";
 
 import { Expense } from "@/types/expense";
-import { formatLocalDate, isCurrentMonth, sortByDateDesc } from "@/lib/utils";
+import { cn, formatLocalDate, isCurrentMonth, sortByDateDesc } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { EditExpenseDialog } from "./edit-expense-dialog";
 import { DeleteExpenseDialog } from "./delete-expense-dialog";
@@ -10,6 +10,8 @@ import { CalendarIcon, TagIcon } from "lucide-react";
 import { AddExpensePopover } from "./add-expense-popover";
 import { Table, TableHeader, TableBody, TableCell, TableHead, TableRow } from "../ui/table";
 import { Badge } from "../ui/badge";
+import CategoryLabel from "../category-label";
+
 
 interface ExpensesTableProps {
   expenses: Expense[];
@@ -95,8 +97,8 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                   <TableHead>Title</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Category</TableHead>
-                  <TableHead>Due Date</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Due/Paid Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -106,22 +108,22 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                   <TableRow key={expense.id}>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{expense.title}</div>
+                        <div className="font-bold text-base">{expense.title}</div>
                         <div className="text-sm text-muted-foreground">{expense.description}</div>
                       </div>
                     </TableCell>
                     <TableCell className="font-mono">${expense.amount}</TableCell>
                     <TableCell className="capitalize">
-                      <Badge variant="outline" className={`text-xs`}>
-                        {expense.category || 'Uncategorized'}
+                      <CategoryLabel category={expense.category || 'Uncategorized'} />
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`text-xs ${expense.paidAt ? 'bg-green-600 dark:bg-green-300' : 'bg-red-500 dark:bg-red-300 font-bold'}`}>
+                        {expense.paidAt ? `Paid` : 'Unpaid'}
                       </Badge>
                     </TableCell>
-                    <TableCell>{formatLocalDate(expense.dueDate)}</TableCell>
-                    <TableCell>
-                      <span className={`text-xs ${expense.paidAt ? 'text-green-600 dark:text-green-300' : 'text-red-500 font-bold'}`}>
-                        {expense.paidAt ? `Paid at ${formatLocalDate(expense.paidAt)}` : 'Unpaid'}
-                      </span>
-                    </TableCell>
+                    <TableCell className="font-mono"><span className={cn(
+                      expense.paidAt ? 'text-green-700 dark:text-green-200' : 'text-red-800 dark:text-red-300'
+                    )}>{formatLocalDate(expense.paidAt ? expense.paidAt : expense.dueDate)}</span></TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <EditExpenseDialog expense={expense} />
@@ -207,8 +209,8 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                     <TableCell className="capitalize">{expense.category || 'Uncategorized'}</TableCell>
                     <TableCell>{formatLocalDate(expense.dueDate)}</TableCell>
                     <TableCell>
-                      <span className={`text-sm ${expense.paidAt ? 'text-green-500' : 'text-red-500'}`}>
-                        {expense.paidAt ? 'Paid' : 'Unpaid'}
+                      <span className={`text-xs ${expense.paidAt ? 'text-green-600 dark:text-green-300' : 'text-red-500 font-bold'}`}>
+                        {expense.paidAt ? `Paid at ${formatLocalDate(expense.paidAt)}` : 'Unpaid'}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">

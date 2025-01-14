@@ -16,7 +16,7 @@ export const getExpenses = unstable_cache(
       .select()
       .from(expenses)
       .where(eq(expenses.userId, userId))
-      .orderBy(desc(expenses.dueDate))
+      .orderBy(desc(expenses.paidAt ?? expenses.dueDate))
     
     return expensesResponse
   },
