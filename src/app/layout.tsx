@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "💸 Money Flow",
-  description: "Money Flow is a simple bill tracker that helps you manage your bills and payments.",
+  title: "💸 Controla-gastos",
+  description: "Controla-gastos is a simple bill tracker that helps you manage your bills and payments.",
 };
 
 export default async function RootLayout({
