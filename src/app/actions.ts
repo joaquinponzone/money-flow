@@ -7,6 +7,7 @@ import { desc, eq, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { Expense, NewExpense } from '@/types/expense'
 import { Income, NewIncome } from '@/types/income'
+import { z } from 'zod'
 
 export const getExpenses = unstable_cache(
   async (userId: string | undefined): Promise<Expense[]> => {
@@ -141,19 +142,55 @@ export const getIncomes = unstable_cache(
   { revalidate: 60, tags: ['incomes'] }
 )
 
-export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<Income> {
-  const [insertedIncome] = await db.insert(incomes).values({
-    userId: income.userId,
-    source: income.source,
-    amount: income.amount,
-    date: income.date ? new Date(income.date) : null,
-  }).returning();
+export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<{ data: Income | null; error: string | null }> {
+  try {
+    // Validate input
+    const incomeSchema = z.object({
+      userId: z.string().uuid(),
+      source: z.string().min(1, "Source is required"),
+      amount: z.string().regex(/^\d+(\.\d{0,2})?$/, "Invalid amount format"),
+      date: z.string().nullable().transform(val => val ? new Date(val) : null)
+    });
 
-  revalidatePath('/')
-  return {
-    ...insertedIncome,
-    amount: insertedIncome.amount.toString()
-  };
+    const validatedData = incomeSchema.parse(income);
+    
+    // Insert into database
+    const [insertedIncome] = await db.insert(incomes).values({
+      userId: validatedData.userId,
+      source: validatedData.source,
+      amount: validatedData.amount,
+      date: validatedData.date
+    }).returning();
+
+    if (!insertedIncome) {
+      return { data: null, error: "Failed to create income" };
+    }
+
+    revalidatePath('/');
+    
+    return {
+      data: {
+        ...insertedIncome,
+        amount: insertedIncome.amount.toString()
+      },
+      error: null
+    };
+
+  } catch (error) {
+    console.error('Error creating income:', error);
+    
+    if (error instanceof z.ZodError) {
+      return { 
+        data: null, 
+        error: error.errors[0].message 
+      };
+    }
+
+    return { 
+      data: null, 
+      error: "An unexpected error occurred while creating the income" 
+    };
+  }
 }
 
 export async function updateIncome(income: Income): Promise<Income> {
