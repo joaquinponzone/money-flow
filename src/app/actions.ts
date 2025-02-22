@@ -90,6 +90,8 @@ export async function createExpense(expense: Omit<NewExpense, 'id'>): Promise<Ex
   }).returning();
 
   revalidatePath('/')
+  revalidatePath('/expenses');
+  revalidatePath('/dashboard');
 
   return insertedExpense;
 }
@@ -107,6 +109,8 @@ export async function updateExpense(expense: Expense): Promise<Expense> {
     .returning();
 
   revalidatePath('/')
+  revalidatePath('/expenses');
+  revalidatePath('/dashboard');
 
   return updatedExpense;
 }
@@ -117,6 +121,8 @@ export async function deleteExpense(id: string): Promise<void> {
       .where(eq(expenses.id, Number(id)))
 
     revalidatePath('/')
+    revalidatePath('/expenses');
+    revalidatePath('/dashboard');
   } catch (error) {
     console.error('Error deleting expense:', error)
     throw new Error('Failed to delete expense')
@@ -167,6 +173,8 @@ export async function createIncome(income: Omit<NewIncome, 'id'>): Promise<{ dat
     }
 
     revalidatePath('/');
+    revalidatePath('/incomes');
+    revalidatePath('/dashboard');
     
     return {
       data: {
@@ -204,6 +212,9 @@ export async function updateIncome(income: Income): Promise<Income> {
     .returning();
 
   revalidatePath('/')
+  revalidatePath('/incomes');
+  revalidatePath('/dashboard');
+
   return {
     ...updatedIncome,
     amount: updatedIncome.amount.toString()
@@ -216,6 +227,8 @@ export async function deleteIncome(id: string): Promise<void> {
       .where(eq(incomes.id, Number(id)))
 
     revalidatePath('/')
+    revalidatePath('/incomes');
+    revalidatePath('/dashboard');
   } catch (error) {
     console.error('Error deleting income:', error)
     throw new Error('Failed to delete income')

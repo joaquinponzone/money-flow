@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 interface BudgetOverviewProps {
   data: {
     month: string
-    income: number
+    incomes: number
     expenses: number
   }[]
 }
@@ -75,7 +75,7 @@ export default function BudgetOverview({ data }: BudgetOverviewProps) {
           }}
         />
         <Bar
-          dataKey="income"
+          dataKey="incomes"
           fill="hsl(var(--chart-success))"
           radius={[4, 4, 0, 0]}
           maxBarSize={40}

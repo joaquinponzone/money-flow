@@ -1,19 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getExpenses, getCurrentMonthExpenses, getCurrentMonthIncomes } from "./actions";
+import { getExpenses, getCurrentMonthExpenses, getCurrentMonthIncomes, getIncomes } from "./actions";
 import { cn, formatCurrency } from "@/lib/utils";
 import { XIcon, CheckIcon, Scale, FilePlus, FileMinus } from "lucide-react";
 import BudgetOverview from "@/components/budget-overview";
 import { UpcomingExpenses } from "@/components/upcoming-expenses";
 import { getUserSession } from "@/lib/session";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function DashboardPage() {
   const user = await getUserSession()
   const userId = user?.id
   
-  const [allExpenses, currentMonthExpenses, incomes] = await Promise.all([
+  const [allExpenses, currentMonthExpenses, currentMonthIncomes, allIncomes] = await Promise.all([
     getExpenses(userId),
     getCurrentMonthExpenses(userId),
-    getCurrentMonthIncomes(userId)
+    getCurrentMonthIncomes(userId),
+    getIncomes(userId)
   ])
 
   const totalExpenses = currentMonthExpenses.reduce((sum, expense) => 
@@ -26,7 +28,7 @@ export default async function DashboardPage() {
 
   const unpaidExpenses = totalExpenses - paidExpenses;
 
-  const totalIncome = incomes.reduce((sum, income) => 
+  const totalIncome = currentMonthIncomes.reduce((sum, income) => 
     sum + parseFloat(income.amount), 0
   );
 
@@ -62,7 +64,7 @@ export default async function DashboardPage() {
         && expenseDate.getFullYear() === year;
     });
 
-    const monthIncomes = incomes.filter(income => {
+    const monthIncomes = allIncomes.filter(income => {
       if (!income.date) return false;
       const incomeDate = new Date(income.date);
       return incomeDate.getMonth() === new Date(`${month} 1, ${year}`).getMonth() 
@@ -74,7 +76,7 @@ export default async function DashboardPage() {
       expenses: monthExpenses.reduce((sum, expense) => 
         sum + parseFloat(expense.amount), 0
       ),
-      income: monthIncomes.reduce((sum, income) => 
+      incomes: monthIncomes.reduce((sum, income) => 
         sum + parseFloat(income.amount), 0
       )
     };
@@ -86,7 +88,7 @@ export default async function DashboardPage() {
       expenses: currentMonthExpenses.reduce((sum, expense) => 
         sum + parseFloat(expense.amount), 0
       ),
-      income: incomes.reduce((sum, income) => 
+      incomes: currentMonthIncomes.reduce((sum, income) => 
         sum + parseFloat(income.amount), 0
       )
     }
@@ -162,7 +164,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {incomes.map((income) => (
+              {currentMonthIncomes.map((income) => (
                 <div key={income.id} className="flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <div className="space-y-0.5">
@@ -183,7 +185,7 @@ export default async function DashboardPage() {
                   <div className="h-[1px] bg-border" />
                 </div>
               ))}
-              {incomes.length === 0 && (
+              {currentMonthIncomes.length === 0 && (
                 <p className="text-center text-muted-foreground py-4">
                   No recent income sources
                 </p>
@@ -202,36 +204,40 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              {currentMonthExpenses.map((expense) => (
-                <div key={expense.id} className="flex flex-col gap-2">
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-0.5">
-                      <p className="font-medium">{expense.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {expense.date ? new Date(expense.date).toLocaleDateString('en-US', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        }) : 'N/A'}
-                      </p>
+            <ScrollArea className="h-[320px] w-full">
+              <div className="space-y-6 pr-4">
+                {currentMonthExpenses.map((expense) => (
+                  <div key={expense.id} className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center">
+                      <div className="space-y-0.5">
+                        <p className="font-medium">{expense.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {expense.date ? new Date(expense.date).toLocaleDateString('en-US', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          }) : 'N/A'}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={cn("font-bold", expense.paidAt ? "text-green-500" : "text-red-500")}>
+                          {formatCurrency(parseFloat(expense.amount))}
+                        </span>
+                        <span className="w-1.5 h-1.5 rounded-full">
+                          {expense.paidAt ? <CheckIcon className="h-2 w-2 text-green-500" /> : <XIcon className="h-2 w-2 text-red-500" />}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={cn("font-bold", expense.paidAt ? "text-green-500" : "text-red-500")}>{formatCurrency(parseFloat(expense.amount))}</span>
-                      <span className="w-1.5 h-1.5 rounded-full">
-                        {expense.paidAt ? <CheckIcon className="h-2 w-2 text-green-500" /> : <XIcon className="h-2 w-2 text-red-500" />}
-                      </span>
-                    </div>
+                    <div className="h-[1px] bg-border" />
                   </div>
-                  <div className="h-[1px] bg-border" />
-                </div>
-              ))}
-              {currentMonthExpenses.length === 0 && (
-                <p className="text-center text-muted-foreground py-4">
-                  No expenses this month
-                </p>
-              )}
-            </div>
+                ))}
+                {currentMonthExpenses.length === 0 && (
+                  <p className="text-center text-muted-foreground py-4">
+                    No expenses this month
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
 
