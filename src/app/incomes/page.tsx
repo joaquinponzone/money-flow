@@ -1,4 +1,4 @@
-import { IncomesTable } from "@/components/incomes/incomes-table";
+import { IncomesTable } from "@/app/incomes/components/incomes-table";
 import { getIncomes } from "../actions";
 import { getUserSession } from "@/lib/session";
 

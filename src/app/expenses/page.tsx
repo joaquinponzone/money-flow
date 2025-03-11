@@ -1,4 +1,4 @@
-import { ExpensesTable } from "@/components/expenses/expenses-table";
+import { ExpensesTable } from "@/app/expenses/components/expenses-table";
 import { getExpenses } from "../actions";
 import { getUserSession } from "@/lib/session";
 

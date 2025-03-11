@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { EditIncomeDialog } from "./edit-income-dialog";
 import { DeleteIncomeDialog } from "./delete-income-dialog";
 import { AddIncomeDialog } from "./add-income-dialog";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent } from "../../../components/ui/card";
 import { CalendarIcon } from "lucide-react";
 
 interface IncomesTableProps {
@@ -36,7 +36,7 @@ export function IncomesTable({ incomes }: IncomesTableProps) {
       </div>
 
       {/* Mobile view - Cards */}
-      <div className="grid gap-4 md:hidden">
+      <Card className="grid gap-4 md:hidden">
         {sortedIncomes.map((income) => (
           <Card key={income.id} className="bg-card">
             <CardContent className="pt-6">
@@ -71,10 +71,10 @@ export function IncomesTable({ incomes }: IncomesTableProps) {
             No income records found
           </p>
         )}
-      </div>
+      </Card>
 
       {/* Desktop view - Table */}
-      <div className="hidden md:block">
+      <Card className="hidden md:block">
         <Table className="bg-background rounded-lg">
           <TableHeader>
             <TableRow>
@@ -111,7 +111,7 @@ export function IncomesTable({ incomes }: IncomesTableProps) {
             ))}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 } 

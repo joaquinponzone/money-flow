@@ -139,15 +139,15 @@ export default async function DashboardPage() {
       </div>
 
       <div className="rounded-md border bg-card">
-        <div className="block md:hidden p-6">
+        <Card className="block md:hidden p-6">
           <h3 className="text-lg font-semibold mb-4">Budget Overview</h3>
           <BudgetOverview data={budgetOverviewDataMobile}/>
-        </div>
+        </Card>
 
-        <div className="hidden md:block p-6">
+        <Card className="hidden md:block p-6">
           <h3 className="text-lg font-semibold mb-4">Budget Overview</h3>
           <BudgetOverview data={budgetOverviewData}/>
-        </div>
+        </Card>
       </div>
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-3">

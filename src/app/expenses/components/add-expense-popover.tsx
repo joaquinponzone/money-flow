@@ -37,9 +37,9 @@ export function AddExpensePopover({ recurringExpenses }: AddExpensePopoverProps)
                         Add Expense
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-56" align="end">
+                <PopoverContent className="w-68" align="end">
                     <div className="grid gap-2">
-                        <div className="font-medium">Add Expense</div>
+                        {/* <div className="font-bold">Add Expense</div> */}
                         <div className="grid gap-2">
                             <Button
                                 variant="outline"
@@ -59,7 +59,7 @@ export function AddExpensePopover({ recurringExpenses }: AddExpensePopoverProps)
                                     document.getElementById('add-recurring-expense-trigger')?.click()
                                 }}
                             >
-                                From Recurring
+                                From Recurring Expenses
                             </Button>
                         </div>
                     </div>

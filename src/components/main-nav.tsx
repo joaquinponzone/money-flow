@@ -43,17 +43,17 @@ export function MainNav() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full shadow-md bg-background backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-16 md:h-14 items-center justify-between px-4 max-w-7xl mx-auto">
+    <nav className="sticky top-0 z-50 w-full bg-primary border-b-[3px] border-black">
+      <div className="flex h-16 items-center justify-between px-4 max-w-7xl mx-auto">
         <div className="flex items-center space-x-4">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors md:hover:bg-accent ${
+              className={`neo-brutalism flex items-center px-3 py-2 text-sm font-bold transition-all ${
                 pathname === item.href
-                  ? "bg-accent border"
-                  : "text-foreground md:hover:text-foreground"
+                  ? "bg-white"
+                  : "bg-primary hover:bg-white"
               }`}
             >
               <span className="md:hidden">
