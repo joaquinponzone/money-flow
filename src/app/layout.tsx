@@ -4,6 +4,7 @@ import "./globals.css";
 import { MainNav } from "@/components/main-nav";
 import { ThemeProvider } from "next-themes";
 import { getUserSession } from "@/lib/session";
+import { Analytics } from "@vercel/analytics/react"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default async function RootLayout({
           )}
           {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
