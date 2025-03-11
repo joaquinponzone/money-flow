@@ -14,14 +14,15 @@ import { format } from "date-fns";
 import { EditIncomeDialog } from "./edit-income-dialog";
 import { DeleteIncomeDialog } from "./delete-income-dialog";
 import { AddIncomeDialog } from "./add-income-dialog";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent } from "../../../components/ui/card";
 import { CalendarIcon } from "lucide-react";
 
 interface IncomesTableProps {
   incomes: Income[];
+  userId: string;
 }
 
-export function IncomesTable({ incomes }: IncomesTableProps) {
+export function IncomesTable({ incomes, userId }: IncomesTableProps) {
   const sortedIncomes = [...incomes].sort((a, b) => {
     const dateA = a.date ? new Date(a.date).getTime() : 0;
     const dateB = b.date ? new Date(b.date).getTime() : 0;
@@ -32,7 +33,7 @@ export function IncomesTable({ incomes }: IncomesTableProps) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Income Overview</h2>
-        <AddIncomeDialog />
+        <AddIncomeDialog userId={userId} />
       </div>
 
       {/* Mobile view - Cards */}

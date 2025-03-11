@@ -2,15 +2,15 @@
 
 import { Expense } from "@/types/expense";
 import { cn, formatLocalDate, isCurrentMonth, sortByDateDesc } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { EditExpenseDialog } from "./edit-expense-dialog";
 import { DeleteExpenseDialog } from "./delete-expense-dialog";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent } from "../../../components/ui/card";
 import { CalendarIcon, TagIcon } from "lucide-react";
 import { AddExpensePopover } from "./add-expense-popover";
-import { Table, TableHeader, TableBody, TableCell, TableHead, TableRow } from "../ui/table";
-import { Badge } from "../ui/badge";
-import CategoryLabel from "../category-label";
+import { Table, TableHeader, TableBody, TableCell, TableHead, TableRow } from "../../../components/ui/table";
+import { Badge } from "../../../components/ui/badge";
+import CategoryLabel from "../../../components/category-label";
 
 
 interface ExpensesTableProps {

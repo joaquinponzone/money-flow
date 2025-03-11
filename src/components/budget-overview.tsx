@@ -76,13 +76,13 @@ export default function BudgetOverview({ data }: BudgetOverviewProps) {
         />
         <Bar
           dataKey="incomes"
-          fill="hsl(var(--chart-success))"
+          fill="hsl(var(--chart-1))"
           radius={[4, 4, 0, 0]}
           maxBarSize={40}
         />
         <Bar
           dataKey="expenses"
-          fill="hsl(var(--chart-destructive))"
+          fill="hsl(var(--chart-2))"
           radius={[4, 4, 0, 0]}
           maxBarSize={40}
         />

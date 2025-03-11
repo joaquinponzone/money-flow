@@ -34,14 +34,14 @@ const formSchema = z.object({
   date: z.string().nullable(),
 })
 
-export function AddIncomeDialog() {
+export function AddIncomeDialog({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userId: "550e8400-e29b-41d4-a716-446655440000",
+      userId: userId,
       source: "",
       amount: "",
       date: null,
