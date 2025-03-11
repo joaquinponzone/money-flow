@@ -1,7 +1,8 @@
 import { Expense } from "@/types/expense";
-import { formatLocalDate, getDaysDifference } from "@/lib/utils";
+import { cn, formatCurrency, getDaysDifference } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarIcon } from "lucide-react";
+import { CheckIcon, XIcon } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface UpcomingExpensesProps {
   expenses: Expense[];
@@ -31,42 +32,51 @@ export function UpcomingExpenses({ expenses }: UpcomingExpensesProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Upcoming Expenses</CardTitle>
+        <CardTitle className="flex items-center justify-between">
+          Upcoming Expenses
+          <span className="text-sm font-normal text-muted-foreground">
+            Not paid
+          </span>
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {upcomingExpenses.map((expense) => {
-          const dueLabel = getDueDateLabel(expense.dueDate);
-          return (
-            <div key={expense.id} className="flex items-start space-x-4">
-              <div className="rounded-full p-2 bg-muted">
-                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+      <CardContent>
+        <ScrollArea className="h-[420px] p-2 rounded-2xl bg-accent/60">
+          <div className="space-y-1">
+            {upcomingExpenses.map((expense) => {
+              const dueLabel = getDueDateLabel(expense.dueDate);
+              return (
+                <div key={expense.id} className="flex flex-col gap-2 p-2">
+                    <div className="flex justify-between items-center">
+                      <div className="space-y-0.5">
+                        <p className="font-medium">{expense.title}</p>
+                        <p className={cn("text-sm text-muted-foreground", dueLabel ? "text-red-500" : "")}>
+                          {expense.date ? new Date(expense.date).toLocaleDateString('en-US', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          }) : 'N/A'} {dueLabel ? `(${dueLabel})` : ''}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={cn("font-bold", expense.paidAt ? "text-green-500" : "text-red-500")}>
+                          {formatCurrency(parseFloat(expense.amount))}
+                        </span>
+                        <span className="w-1.5 h-1.5 rounded-full">
+                          {expense.paidAt ? <CheckIcon className="h-2 w-2 text-green-500" /> : <XIcon className="h-2 w-2 text-red-500" />}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="h-[1px] bg-border" />
+                  </div>
+              );
+            })}
+            {upcomingExpenses.length === 0 && (
+              <div className="flex h-[320px] items-center justify-center">
+                <p className="text-sm text-muted-foreground">No upcoming expenses</p>
               </div>
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between">
-                  <p className="flex gap-1 items-center font-medium">
-                    {expense.title}
-                    <span className={`text-sm ${
-                      dueLabel.includes('Overdue') ? 'text-red-500' : 'text-muted-foreground'
-                    }`}>
-                      ({dueLabel})
-                    </span>
-                  </p>
-                  <p className="font-medium">${expense.amount}</p>
-                </div>
-                
-                <p className="text-sm text-muted-foreground">
-                  {expense.description}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {formatLocalDate(expense.dueDate)}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-        {upcomingExpenses.length === 0 && (
-          <p className="text-center text-muted-foreground">No upcoming expenses</p>
-        )}
+            )}
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );
