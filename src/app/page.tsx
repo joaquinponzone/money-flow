@@ -166,7 +166,7 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[420px] w-full rounded-2xl bg-chart-2/10 dark:bg-accent/60">
+            <ScrollArea className="h-[420px] w-full rounded-2xl bg-accent/60">
               <div className="space-y-6 p-3">
                 {currentMonthIncomes.map((income) => (
                   <div key={income.id} className="flex flex-col gap-2">
