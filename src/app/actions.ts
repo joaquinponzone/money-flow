@@ -249,7 +249,7 @@ export const getCurrentMonthExpenses = unstable_cache(
       .where(sql`${expenses.userId} = ${userId} 
         AND ${expenses.date} >= ${startOfMonth}::timestamp 
         AND ${expenses.date} <= ${endOfMonth}::timestamp`)
-      .orderBy(desc(expenses.date))
+      .orderBy(desc(expenses.amount))
     
     return expensesResponse
   },

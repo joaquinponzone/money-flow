@@ -94,6 +94,7 @@ export default async function DashboardPage() {
     }
   })
 
+  const currentMonthName = new Date().toLocaleString('default', { month: 'long' })
 
   return (
     <div className="container mx-auto py-10 px-4 space-y-6 ">
@@ -107,7 +108,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold"><span className="font-mono">{formatCurrency(totalIncome)}</span></div>
-            <p className="text-xs text-muted-foreground">Monthly total</p>
+            <p className="text-xs text-muted-foreground">{currentMonthName}&apos;s total</p>
           </CardContent>
         </Card>
 
@@ -135,7 +136,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold font-mono">{formatCurrency(balance)}</div>
-            <p className={cn("text-xs text-muted-foreground", balance > 0 ? "" : "text-red-500")}>{balancePercentage}% available for discretionary expenses</p>
+            <p className={cn("text-xs text-muted-foreground", balance > 0 ? "" : "text-red-500")}>{balance > 0 ? `You have the ${balancePercentage}% of your income is available for discretionary expenses or savings` : "No discretionary expenses or savings available"}</p>
           </CardContent>
         </Card>
       </div>
@@ -143,16 +144,18 @@ export default async function DashboardPage() {
       <div className="rounded-md border bg-card">
         <div className="block md:hidden p-6">
           <h3 className="text-lg font-semibold mb-4">Budget Overview</h3>
+          <p className="text-sm text-muted-foreground mb-4">This is a summary of your income and expenses for the last 6 months.</p>
           <BudgetOverview data={budgetOverviewDataMobile}/>
         </div>
 
         <div className="hidden md:block p-6">
           <h3 className="text-lg font-semibold mb-4">Budget Overview</h3>
+          <p className="text-sm text-muted-foreground mb-4">This is a summary of your income and expenses for the last 6 months.</p>
           <BudgetOverview data={budgetOverviewData}/>
         </div>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-3 max-h-[420px]">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
@@ -163,49 +166,51 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              {currentMonthIncomes.map((income) => (
-                <div key={income.id} className="flex flex-col gap-2">
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-0.5">
-                      <p className="font-medium">{income.source}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {income.date ? new Date(income.date).toLocaleDateString('en-US', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        }) : 'N/A'}
-                      </p>
+            <ScrollArea className="h-[420px] w-full rounded-2xl bg-chart-2/10 dark:bg-accent/60">
+              <div className="space-y-6 p-3">
+                {currentMonthIncomes.map((income) => (
+                  <div key={income.id} className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center">
+                      <div className="space-y-0.5">
+                        <p className="font-medium">{income.source}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {income.date ? new Date(income.date).toLocaleDateString('en-US', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          }) : 'N/A'}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold">{formatCurrency(parseFloat(income.amount))}</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold">{formatCurrency(parseFloat(income.amount))}</span>
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                    </div>
+                    <div className="h-[1px] bg-border" />
                   </div>
-                  <div className="h-[1px] bg-border" />
-                </div>
-              ))}
-              {currentMonthIncomes.length === 0 && (
-                <p className="text-center text-muted-foreground py-4">
-                  No recent income sources
-                </p>
-              )}
-            </div>
+                ))}
+                {currentMonthIncomes.length === 0 && (
+                  <p className="text-center text-muted-foreground py-4">
+                    No recent income sources
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              Expense Sources
+              Highest Expenses
               <span className="text-sm font-normal text-muted-foreground">
                 Current Month
               </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[320px] w-full">
-              <div className="space-y-6 pr-4">
+            <ScrollArea className="h-[420px] w-full rounded-2xl bg-accent/60">
+              <div className="space-y-6 p-3">
                 {currentMonthExpenses.map((expense) => (
                   <div key={expense.id} className="flex flex-col gap-2">
                     <div className="flex justify-between items-center">
