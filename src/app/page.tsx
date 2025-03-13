@@ -165,7 +165,6 @@ export default async function DashboardPage() {
             <BudgetOverview data={budgetOverviewData}/>
           </div>
         </div>
-
         <div className="grid gap-4 grid-cols-1 lg:grid-cols-3 pb-8">
           <Card>
             <CardHeader>
