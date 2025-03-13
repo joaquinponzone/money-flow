@@ -51,7 +51,11 @@ export function DeleteExpenseDialog({ expenseId, expenseTitle }: DeleteExpenseDi
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={handleDelete} disabled={isLoading}>
+          <AlertDialogAction 
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90" 
+            onClick={handleDelete} 
+            disabled={isLoading}
+          >
             {isLoading ? "Deleting..." : "Delete"}
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
           </AlertDialogAction>

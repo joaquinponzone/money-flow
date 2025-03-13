@@ -69,7 +69,7 @@ export function AddFromRecurringExpenseDialog({
           title: expense.title,
           amount: expense.amount,
           description: expense.description,
-          category: expense.category,
+          category: expense.category?.toLowerCase() || null,
           date: format(currentDate, "yyyy-MM-dd"),
           isRecurring: expense.isRecurring,
           paidAt: null,

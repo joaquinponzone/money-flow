@@ -35,6 +35,7 @@ import { updateExpense } from "@/app/actions"
 import { Expense } from "@/types/expense"
 import { Loader2, Pencil } from "lucide-react"
 import { format } from "date-fns"
+import { ExpenseCategories } from "@/lib/constants"
 
 const formSchema = z.object({
   id: z.number(),
@@ -49,16 +50,11 @@ const formSchema = z.object({
   dueDate: z.string().nullable(),
 })
 
-const categories = [
-  { value: "housing", label: "Housing" },
-  { value: "utilities", label: "Utilities" },
-  { value: "food", label: "Food" },
-  { value: "transportation", label: "Transportation" },
-  { value: "insurance", label: "Insurance" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "entertainment", label: "Entertainment" },
-  { value: "other", label: "Other" },
-]
+// Generate categories array from ExpenseCategories constant
+const categories = ExpenseCategories.map(category => ({
+  value: category.toLowerCase(),
+  label: category
+}))
 
 interface EditExpenseDialogProps {
   expense: Expense;
@@ -77,7 +73,7 @@ export function EditExpenseDialog({ expense }: EditExpenseDialogProps) {
       title: expense.title,
       description: expense.description,
       amount: expense.amount,
-      category: expense.category,
+      category: expense.category?.toLowerCase(),
       date: expense.date ? format(new Date(expense.date), "yyyy-MM-dd") : null,
       dueDate: expense.dueDate ? format(new Date(expense.dueDate), "yyyy-MM-dd") : null,
       isRecurring: expense.isRecurring,
@@ -92,6 +88,7 @@ export function EditExpenseDialog({ expense }: EditExpenseDialogProps) {
       await updateExpense({
         ...expense,
         ...values,
+        category: values.category?.toLowerCase() || null,
         paidAt: values.isPaid 
           ? (expense.paidAt ? expense.paidAt : format(currentDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"))
           : null,
