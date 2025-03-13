@@ -15,7 +15,7 @@ export function Footer({
     <footer className="w-full py-6 mt-auto">
       <div className="container flex justify-center items-center text-sm text-muted-foreground">
         <p>
-          Hecho con <span className="text-red-500">❤</span> por{" "}
+          Made with <span className="text-red-500">❤</span> by{" "}
           <Link 
             href={authorLink} 
             target="_blank" 
