@@ -37,6 +37,7 @@ import { NewExpense } from "@/types/expense"
 import { Loader2 } from "lucide-react"
 import { createBrowserClient } from "@supabase/ssr"
 import { PlusCircle } from "lucide-react"
+import { ExpenseCategories } from "@/lib/constants"
 
 const formSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
@@ -50,16 +51,11 @@ const formSchema = z.object({
   dueDate: z.string().nullable(),
 })
 
-const categories = [
-  { value: "housing", label: "Housing" },
-  { value: "utilities", label: "Utilities" },
-  { value: "food", label: "Food" },
-  { value: "transportation", label: "Transportation" },
-  { value: "insurance", label: "Insurance" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "entertainment", label: "Entertainment" },
-  { value: "other", label: "Other" },
-]
+// Generate categories array from ExpenseCategories constant
+const categories = ExpenseCategories.map(category => ({
+  value: category.toLowerCase(),
+  label: category
+}))
 
 export function AddExpenseDialog() {
   const [open, setOpen] = useState(false)
@@ -108,6 +104,7 @@ export function AddExpenseDialog() {
     try {
       const newExpense: NewExpense = {
         ...values,
+        category: values.category?.toLowerCase() || null,
         dueDate: values.isPaid ? new Date() : values.dueDate ? new Date(values.dueDate).toISOString() : null,
         paidAt: values.isPaid ? new Date() : null
       }

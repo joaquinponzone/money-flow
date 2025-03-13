@@ -31,14 +31,9 @@ export function SignOutButton() {
   }
 
   return (
-    <>
-      <Button variant="ghost" className="hidden md:block" onClick={handleSignOut}>
-        Sign Out
-      </Button>
-      <span className={`text-sm font-medium transition-colors text-foreground block md:hidden`}>
-          <LogOutIcon className="size-6" />
-        </span>
-    </>
-
+    <Button variant="ghost" onClick={handleSignOut} className="text-red-500 w-full justify-start p-3">
+      <LogOutIcon className="size-6" />
+      Sign Out
+    </Button>
   )
 }

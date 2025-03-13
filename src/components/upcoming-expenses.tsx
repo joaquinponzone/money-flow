@@ -40,7 +40,7 @@ export function UpcomingExpenses({ expenses }: UpcomingExpensesProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[420px] p-2 rounded-2xl bg-accent/60">
+        <ScrollArea className="h-[420px] p-2">
           <div className="space-y-1">
             {upcomingExpenses.map((expense) => {
               const dueLabel = getDueDateLabel(expense.dueDate);

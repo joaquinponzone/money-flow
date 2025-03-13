@@ -5,6 +5,7 @@ import { MainNav } from "@/components/main-nav";
 import { ThemeProvider } from "next-themes";
 import { getUserSession } from "@/lib/session";
 import { Analytics } from "@vercel/analytics/react"
+import { Footer } from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,7 @@ export default async function RootLayout({
   const session = await getUserSession();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-accent dark:bg-background/30`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-accent dark:bg-background/10 flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -39,7 +40,10 @@ export default async function RootLayout({
           {session && (
             <MainNav />
           )}
-          {children}
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
         </ThemeProvider>
         <Analytics />
       </body>
