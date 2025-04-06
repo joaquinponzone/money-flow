@@ -79,27 +79,27 @@ export function IncomesTable({ incomes, userId }: IncomesTableProps) {
         <Table className="bg-background rounded-lg">
           <TableHeader>
             <TableRow>
-              <TableHead>Source</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="p-4">Source</TableHead>
+              <TableHead className="p-4">Amount</TableHead>
+              <TableHead className="p-4">Date</TableHead>
+              <TableHead className="text-right p-4">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sortedIncomes.map((income) => (
               <TableRow key={income.id}>
-                <TableCell>
+                <TableCell className="p-4">
                   <div className="font-medium">{income.source}</div>
                 </TableCell>
-                <TableCell className="font-mono">
+                <TableCell className="font-mono p-4">
                   {formatCurrency(Number(income.amount))}
                 </TableCell>
-                <TableCell>
+                <TableCell className="p-4">
                   {income.date
                     ? format(new Date(income.date), "MMM dd, yyyy")
                     : "No date"}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right p-4">
                   <div className="flex justify-end gap-2">
                     <EditIncomeDialog income={income} />
                     <DeleteIncomeDialog

@@ -291,15 +291,15 @@ export const getCurrentMonthIncomes = unstable_cache(
     if (!userId) return []
 
     const today = new Date()
-    const thirtyDaysAgo = new Date(today)
-    thirtyDaysAgo.setDate(today.getDate() - 30)
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString()
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString()
 
     const incomesResponse = await db
       .select()
       .from(incomes)
       .where(sql`${incomes.userId} = ${userId} 
-        AND ${incomes.date} >= ${thirtyDaysAgo.toISOString()}::timestamp 
-        AND ${incomes.date} <= ${today.toISOString()}::timestamp`)
+        AND ${incomes.date} >= ${startOfMonth}::timestamp 
+        AND ${incomes.date} <= ${endOfMonth}::timestamp`)
       .orderBy(desc(incomes.date))
     
     return incomesResponse.map(income => ({
