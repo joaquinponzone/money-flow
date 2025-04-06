@@ -107,7 +107,7 @@ export function EditExpenseDialog({ expense }: EditExpenseDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon">
-          <Pencil className="h-4 w-4 text-teal-600 dark:text-teal-300" />
+          <Pencil className="h-4 w-4 text-primary dark:text-primary" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

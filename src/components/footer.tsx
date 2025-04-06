@@ -12,7 +12,7 @@ export function Footer({
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="w-full py-6 mt-auto">
+    <footer className="w-full max-w-screen-xl mx-auto py-6 mt-auto">
       <div className="container flex justify-center items-center text-sm text-muted-foreground">
         <p>
           Made with <span className="text-red-500">❤</span> by{" "}
