@@ -11,7 +11,8 @@
     "db:push": "drizzle-kit push",
     "db:seed": "bun run src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "ios": "open -a Simulator"
+    "ios": "open -a Simulator",
+    "generate-vapid-keys": "web-push generate-vapid-keys"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -40,7 +41,9 @@
     "drizzle-kit": "^0.30.1",
     "drizzle-orm": "^0.38.3",
     "lucide-react": "^0.469.0",
+    "minimatch": "^10.0.3",
     "next": "15.1.2",
+    "next-pwa": "^5.6.0",
     "next-themes": "^0.4.4",
     "pg-core": "^0.1.15",
     "postgres": "^3.4.5",
@@ -49,16 +52,20 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "recharts": "^2.15.0",
+    "sonner": "^2.0.6",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "web-push": "^3.6.7",
     "xlsx": "^0.18.5",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/minimatch": "^6.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
     "eslint": "^9",
     "eslint-config-next": "15.1.2",
     "postcss": "^8",

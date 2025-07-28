@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SignOutButton } from "./sign-out";
-import { Settings, User as UserIcon } from "lucide-react";
+import { Settings, User as UserIcon, Bell } from "lucide-react";
 import Link from "next/link";
 
 interface UserProfileDropdownProps {
@@ -53,9 +53,15 @@ export function UserProfileDropdown({ user }: UserProfileDropdownProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/" className="flex items-center gap-2 cursor-pointer">
+          <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
             <Settings className="size-4" />
             <span>Settings</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings/notifications" className="flex items-center gap-2 cursor-pointer">
+            <Bell className="size-4" />
+            <span>Notifications</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
