@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { HomeIcon, ListMinus, ListPlus, Menu, X } from "lucide-react";
+import { Bell, HomeIcon, ListMinus, ListPlus, Menu, X } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { User } from "@supabase/supabase-js";
 import { UserProfileDropdown } from "./user-profile-dropdown";
@@ -13,6 +13,7 @@ const navItems = [
   { href: "/", label: "Dashboard", icon: <HomeIcon className="size-5" /> },
   { href: "/expenses", label: "Expenses", icon: <ListMinus className="size-5" /> },
   { href: "/incomes", label: "Incomes", icon: <ListPlus className="size-5" /> },
+  { href: "/settings/notifications", label: "Notifications", icon: <Bell className="size-5" /> },
 ];
 
 export function MainNav() {

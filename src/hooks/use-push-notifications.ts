@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PushNotificationState {
   isSupported: boolean;
@@ -38,7 +38,7 @@ export function usePushNotifications() {
   }, []);
 
   // Check subscription status
-  const checkSubscriptionStatus = useCallback(async () => {
+  const checkSubscriptionStatus = async () => {
     try {
       if (!state.isSupported) return;
 
@@ -58,10 +58,10 @@ export function usePushNotifications() {
         isLoading: false 
       }));
     }
-  }, [state.isSupported]);
+  };
 
   // Load notification preferences
-  const loadPreferences = useCallback(async () => {
+  const loadPreferences = async () => {
     try {
       const response = await fetch('/api/push/preferences');
       if (response.ok) {
@@ -71,15 +71,16 @@ export function usePushNotifications() {
     } catch (error) {
       console.error('Error loading preferences:', error);
     }
-  }, []);
+  };
 
   useEffect(() => {
     checkSubscriptionStatus();
     loadPreferences();
-  }, [checkSubscriptionStatus, loadPreferences]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Subscribe to push notifications
-  const subscribe = useCallback(async () => {
+  const subscribe = async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
 
@@ -146,10 +147,10 @@ export function usePushNotifications() {
         isLoading: false 
       }));
     }
-  }, []);
+  };
 
   // Unsubscribe from push notifications
-  const unsubscribe = useCallback(async () => {
+  const unsubscribe = async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
 
@@ -179,10 +180,10 @@ export function usePushNotifications() {
         isLoading: false 
       }));
     }
-  }, []);
+  };
 
   // Update notification preferences
-  const updatePreferences = useCallback(async (newPreferences: Partial<NotificationPreferences>) => {
+  const updatePreferences = async (newPreferences: Partial<NotificationPreferences>) => {
     try {
       const response = await fetch('/api/push/preferences', {
         method: 'PUT',
@@ -202,10 +203,10 @@ export function usePushNotifications() {
       console.error('Error updating preferences:', error);
       throw error;
     }
-  }, []);
+  };
 
   // Send test notification
-  const sendTestNotification = useCallback(async () => {
+  const sendTestNotification = async () => {
     try {
       const response = await fetch('/api/push/send', {
         method: 'POST',
@@ -230,7 +231,7 @@ export function usePushNotifications() {
       console.error('Error sending test notification:', error);
       throw error;
     }
-  }, []);
+  };
 
   return {
     ...state,

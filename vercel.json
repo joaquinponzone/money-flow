@@ -16,7 +16,7 @@
       ]
     },
     {
-      "source": "/sw.js",
+      "source": "/sw-custom.js",
       "headers": [
         {
           "key": "Content-Type",
