@@ -14,6 +14,8 @@ import CategoryLabel from "../../../components/category-label";
 import { Switch } from "../../../components/ui/switch";
 import { Label } from "../../../components/ui/label";
 import { useState } from "react";
+import { usePagination } from "@/hooks/use-pagination";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
 
 
 interface ExpensesTableProps {
@@ -22,6 +24,7 @@ interface ExpensesTableProps {
 
 export function ExpensesTable({ expenses }: ExpensesTableProps) {
   const [showUnpaidOnly, setShowUnpaidOnly] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
   const currentMonthExpenses = expenses.filter(expense => 
     isCurrentMonth(expense.dueDate)
@@ -50,6 +53,18 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
     ? expensesHistory.filter(expense => !expense.paidAt)
     : expensesHistory;
 
+  // Pagination for current month expenses
+  const currentMonthPagination = usePagination({
+    data: filteredCurrentMonthExpenses,
+    itemsPerPage,
+  });
+
+  // Pagination for expenses history
+  const historyPagination = usePagination({
+    data: filteredExpensesHistory,
+    itemsPerPage,
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -75,7 +90,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
 
           {/* Mobile view - Cards */}
           <div className="grid gap-4 md:hidden">
-            {filteredCurrentMonthExpenses.map((expense) => (
+            {currentMonthPagination.currentData.map((expense) => (
               <Card key={expense.id} className="bg-card">
                 <CardContent className="pt-6">
                   <div className="flex justify-between items-start">
@@ -105,7 +120,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </CardContent>
               </Card>
             ))}
-            {filteredCurrentMonthExpenses.length === 0 && (
+            {currentMonthPagination.currentData.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
                 {showUnpaidOnly ? 'No unpaid expenses for this month' : 'No expenses for this month'}
               </p>
@@ -126,7 +141,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCurrentMonthExpenses.map((expense) => {
+                {currentMonthPagination.currentData.map((expense) => {
                   return (
                   <TableRow key={expense.id}>
                     <TableCell>
@@ -157,12 +172,24 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 )})}
               </TableBody>
             </Table>
-            {filteredCurrentMonthExpenses.length === 0 && (
+            {currentMonthPagination.currentData.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
                 {showUnpaidOnly ? 'No unpaid expenses for this month' : 'No expenses for this month'}
               </p>
             )}
           </div>
+
+          {/* Pagination */}
+          <DataTablePagination
+            currentPage={currentMonthPagination.currentPage}
+            totalPages={currentMonthPagination.totalPages}
+            totalItems={currentMonthPagination.totalItems}
+            startIndex={currentMonthPagination.startIndex}
+            endIndex={currentMonthPagination.endIndex}
+            onPageChange={currentMonthPagination.goToPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         </TabsContent>
 
         <TabsContent value="history">
@@ -178,7 +205,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
           {/* Similar structure for history tab */}
           {/* Mobile view - Cards */}
           <div className="grid gap-4 md:hidden">
-            {filteredExpensesHistory.map((expense) => (
+            {historyPagination.currentData.map((expense) => (
               <Card key={expense.id} className="bg-card">
                 <CardContent className="pt-6">
                   <div className="flex justify-between items-start">
@@ -208,7 +235,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </CardContent>
               </Card>
             ))}
-            {filteredExpensesHistory.length === 0 && (
+            {historyPagination.currentData.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
                 {showUnpaidOnly ? 'No unpaid expenses in history' : 'No expense history'}
               </p>
@@ -229,7 +256,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredExpensesHistory.map((expense) => (
+                {historyPagination.currentData.map((expense) => (
                   <TableRow key={expense.id}>
                     <TableCell>
                       <div>
@@ -255,12 +282,24 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 ))}
               </TableBody>
             </Table>
-            {filteredExpensesHistory.length === 0 && (
+            {historyPagination.currentData.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
                 {showUnpaidOnly ? 'No unpaid expenses in history' : 'No expense history'}
               </p>
             )}
           </div>
+
+          {/* Pagination */}
+          <DataTablePagination
+            currentPage={historyPagination.currentPage}
+            totalPages={historyPagination.totalPages}
+            totalItems={historyPagination.totalItems}
+            startIndex={historyPagination.startIndex}
+            endIndex={historyPagination.endIndex}
+            onPageChange={historyPagination.goToPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         </TabsContent>
       </Tabs>
     </div>

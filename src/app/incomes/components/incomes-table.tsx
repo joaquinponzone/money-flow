@@ -16,6 +16,9 @@ import { DeleteIncomeDialog } from "./delete-income-dialog";
 import { AddIncomeDialog } from "./add-income-dialog";
 import { Card, CardContent } from "../../../components/ui/card";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { usePagination } from "@/hooks/use-pagination";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
 
 interface IncomesTableProps {
   incomes: Income[];
@@ -23,10 +26,17 @@ interface IncomesTableProps {
 }
 
 export function IncomesTable({ incomes, userId }: IncomesTableProps) {
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+
   const sortedIncomes = [...incomes].sort((a, b) => {
     const dateA = a.date ? new Date(a.date).getTime() : 0;
     const dateB = b.date ? new Date(b.date).getTime() : 0;
     return dateB - dateA;
+  });
+
+  const pagination = usePagination({
+    data: sortedIncomes,
+    itemsPerPage,
   });
 
   return (
@@ -38,7 +48,7 @@ export function IncomesTable({ incomes, userId }: IncomesTableProps) {
 
       {/* Mobile view - Cards */}
       <div className="grid gap-4 md:hidden">
-        {sortedIncomes.map((income) => (
+        {pagination.currentData.map((income) => (
           <Card key={income.id} className="bg-card">
             <CardContent className="pt-6">
               <div className="flex justify-between items-start">
@@ -67,7 +77,7 @@ export function IncomesTable({ incomes, userId }: IncomesTableProps) {
             </CardContent>
           </Card>
         ))}
-        {sortedIncomes.length === 0 && (
+        {pagination.currentData.length === 0 && (
           <p className="text-center text-muted-foreground py-8">
             No income records found
           </p>
@@ -86,7 +96,7 @@ export function IncomesTable({ incomes, userId }: IncomesTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedIncomes.map((income) => (
+            {pagination.currentData.map((income) => (
               <TableRow key={income.id}>
                 <TableCell className="p-4">
                   <div className="font-medium">{income.source}</div>
@@ -112,7 +122,24 @@ export function IncomesTable({ incomes, userId }: IncomesTableProps) {
             ))}
           </TableBody>
         </Table>
+        {pagination.currentData.length === 0 && (
+          <p className="text-center text-muted-foreground py-8">
+            No income records found
+          </p>
+        )}
       </div>
+
+      {/* Pagination */}
+      <DataTablePagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        startIndex={pagination.startIndex}
+        endIndex={pagination.endIndex}
+        onPageChange={pagination.goToPage}
+        itemsPerPage={itemsPerPage}
+        onItemsPerPageChange={setItemsPerPage}
+      />
     </div>
   );
 } 
