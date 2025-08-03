@@ -11,6 +11,9 @@ import { AddExpensePopover } from "./add-expense-popover";
 import { Table, TableHeader, TableBody, TableCell, TableHead, TableRow } from "../../../components/ui/table";
 import { Badge } from "../../../components/ui/badge";
 import CategoryLabel from "../../../components/category-label";
+import { Switch } from "../../../components/ui/switch";
+import { Label } from "../../../components/ui/label";
+import { useState } from "react";
 
 
 interface ExpensesTableProps {
@@ -18,6 +21,8 @@ interface ExpensesTableProps {
 }
 
 export function ExpensesTable({ expenses }: ExpensesTableProps) {
+  const [showUnpaidOnly, setShowUnpaidOnly] = useState(false);
+
   const currentMonthExpenses = expenses.filter(expense => 
     isCurrentMonth(expense.dueDate)
   );
@@ -36,6 +41,15 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
     return [...unique, expense];
   }, [] as Expense[]);
 
+  // Filter expenses based on the switch state
+  const filteredCurrentMonthExpenses = showUnpaidOnly 
+    ? currentMonthExpenses.filter(expense => !expense.paidAt)
+    : currentMonthExpenses;
+
+  const filteredExpensesHistory = showUnpaidOnly 
+    ? expensesHistory.filter(expense => !expense.paidAt)
+    : expensesHistory;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -50,9 +64,18 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
         </TabsList>
 
         <TabsContent value="monthly">
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch
+              id="unpaid-only"
+              checked={showUnpaidOnly}
+              onCheckedChange={setShowUnpaidOnly}
+            />
+            <Label htmlFor="unpaid-only">Show unpaid expenses only</Label>
+          </div>
+
           {/* Mobile view - Cards */}
           <div className="grid gap-4 md:hidden">
-            {currentMonthExpenses.map((expense) => (
+            {filteredCurrentMonthExpenses.map((expense) => (
               <Card key={expense.id} className="bg-card">
                 <CardContent className="pt-6">
                   <div className="flex justify-between items-start">
@@ -82,9 +105,9 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </CardContent>
               </Card>
             ))}
-            {currentMonthExpenses.length === 0 && (
+            {filteredCurrentMonthExpenses.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
-                No expenses for this month
+                {showUnpaidOnly ? 'No unpaid expenses for this month' : 'No expenses for this month'}
               </p>
             )}
           </div>
@@ -103,7 +126,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentMonthExpenses.map((expense) => {
+                {filteredCurrentMonthExpenses.map((expense) => {
                   return (
                   <TableRow key={expense.id}>
                     <TableCell>
@@ -134,19 +157,28 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 )})}
               </TableBody>
             </Table>
-            {currentMonthExpenses.length === 0 && (
+            {filteredCurrentMonthExpenses.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
-                No expenses for this month
+                {showUnpaidOnly ? 'No unpaid expenses for this month' : 'No expenses for this month'}
               </p>
             )}
           </div>
         </TabsContent>
 
         <TabsContent value="history">
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch
+              id="unpaid-only-history"
+              checked={showUnpaidOnly}
+              onCheckedChange={setShowUnpaidOnly}
+            />
+            <Label htmlFor="unpaid-only-history">Show unpaid expenses only</Label>
+          </div>
+
           {/* Similar structure for history tab */}
           {/* Mobile view - Cards */}
           <div className="grid gap-4 md:hidden">
-            {expensesHistory.map((expense) => (
+            {filteredExpensesHistory.map((expense) => (
               <Card key={expense.id} className="bg-card">
                 <CardContent className="pt-6">
                   <div className="flex justify-between items-start">
@@ -176,9 +208,9 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </CardContent>
               </Card>
             ))}
-            {expensesHistory.length === 0 && (
+            {filteredExpensesHistory.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
-                No expense history
+                {showUnpaidOnly ? 'No unpaid expenses in history' : 'No expense history'}
               </p>
             )}
           </div>
@@ -197,7 +229,7 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {expensesHistory.map((expense) => (
+                {filteredExpensesHistory.map((expense) => (
                   <TableRow key={expense.id}>
                     <TableCell>
                       <div>
@@ -223,9 +255,9 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
                 ))}
               </TableBody>
             </Table>
-            {expensesHistory.length === 0 && (
+            {filteredExpensesHistory.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
-                No expense history
+                {showUnpaidOnly ? 'No unpaid expenses in history' : 'No expense history'}
               </p>
             )}
           </div>
